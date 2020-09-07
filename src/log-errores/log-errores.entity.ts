@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from "typeorm";
 import { Error} from '../errores/error.entity'
 import { from } from "rxjs";
-import { Usuarios } from '../usuarios/usuarios';
+import { Usuarios } from '../usuarios/usuarios.entity';
 
 @Entity()
 export class LogErrores {

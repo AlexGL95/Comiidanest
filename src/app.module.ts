@@ -3,15 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Error } from './errores/error.entity';
-import { Usuarios } from './usuarios/usuarios';
+import { Usuarios } from './usuarios/usuarios.entity';
 import { UsuarioService } from './usuarios/usuario.service';
 import { from } from 'rxjs';
 import { UsuarioController } from './usuarios/usuario.controller';
-import { Rondas } from './rondas/rondas';
-import { LogErrores } from './log-errores/log-errores';
-import { Equipo } from './equipos/equipo';
-import { Recetas } from './recetas/recetas';
-import { EquipoReceta } from './equipo-receta/equipo-receta';
+import { Rondas } from './rondas/rondas.entity';
+import { LogErrores } from './log-errores/log-errores.entity';
+import { Equipo } from './equipos/equipos.entity';
+import { Recetas } from './recetas/recetas.entity';
+import { EquipoReceta } from './equipo-receta/equipo-receta.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({

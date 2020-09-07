@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { EquipoReceta } from "src/equipo-receta/equipo-receta";
+import { EquipoReceta } from "src/equipo-receta/equipo-receta.entity";
 
 
 enum Categoria{
