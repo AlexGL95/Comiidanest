@@ -6,8 +6,8 @@ import { type } from "os";
 export class Equipo {
 
     @PrimaryGeneratedColumn()
-    @OneToMany(type => EquipoReceta, EquipoReceta => EquipoReceta.equipo)
-    @OneToMany(type => Usuarios, Usuarios => Usuarios.equipo)
+    @OneToMany(type => EquipoReceta, EquipoReceta => EquipoReceta.equipo) //Relacion uno a muchos con la tabla equiporeceta con la columna equipoid
+    @OneToMany(type => Usuarios, Usuarios => Usuarios.equipo)            //Relacion uno a muchos con la tabla Usuatios columna equipoid
     id:number;
 
     @Column()

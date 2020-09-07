@@ -15,6 +15,7 @@ export class Usuarios {
     @Column()
     super:boolean;
     
-    @ManyToOne(int => Equipo, Equipo=>Equipo.id)
+    @ManyToOne(int => Equipo, Equipo=>Equipo.id)    //Relacion Muchos a uno con tabla equipo columna id
     equipo:number;
+
 }

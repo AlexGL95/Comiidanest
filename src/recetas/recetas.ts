@@ -14,7 +14,7 @@ enum Categoria{
 export class Recetas {
     
     @PrimaryGeneratedColumn()
-    @OneToMany(type => EquipoReceta, EquipoReceta => EquipoReceta.recetas)
+    @OneToMany(type => EquipoReceta, EquipoReceta => EquipoReceta.recetas) //Relacion uno a muchos con la tabla Equipo receta columna Recetaid
     id:number;
 
     @Column()
