@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Usuarios } from './usuarios';
 import { Repository } from 'typeorm';
+import { CreateUsuariodto } from './dto/create-usuariodto';
+import { Equipo } from '../equipos/equipo.entity';
+import { Usuarios } from './usuarios.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -11,8 +13,37 @@ export class UsuarioService {
         private readonly userRepository: Repository<Usuarios>
     ){} 
 
-    async getAll() {
-        return await this.userRepository.find();
+    //Recuperar todos los usuarios
+    
+    async getAll():Promise<Usuarios[]> {
+        return await this.userRepository.find({relations:["equipo"]});
+    }
+
+    //crear nuevo usuario
+
+    async createUser(newuser: CreateUsuariodto):Promise<Usuarios>{
+        const nuevo = new Usuarios();
+        nuevo.id=0;
+        nuevo.nombre=newuser.nombre;
+        nuevo.pass=newuser.pass;
+        nuevo.equipo=newuser.equipoid;
+        return this.userRepository.save(nuevo)
+    }
+
+    //actualizar datos del usuario
+
+    async updateUsuario(idUsuario:number, usuarioActualizar: CreateUsuariodto):Promise<Usuarios>{
+        const usuarioupdate = await this.userRepository.findOne(idUsuario);
+        usuarioupdate.nombre=usuarioActualizar.nombre;
+        usuarioupdate.pass=usuarioActualizar.pass;
+        usuarioupdate.equipo=usuarioActualizar.equipoid;
+        return await this.userRepository.save(usuarioupdate)
+    }
+
+    //eliminar uduario mediante id
+
+    async deleteusuario(idmensaje:number):Promise <any>{
+        return await this.userRepository.delete(idmensaje);
     }
 
 

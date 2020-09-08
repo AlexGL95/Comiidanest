@@ -2,16 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Error } from './errores/error.entity';
+import { Error } from './errores/error.entity.entity';
 import { Usuarios } from './usuarios/usuarios.entity';
 import { UsuarioService } from './usuarios/usuario.service';
 import { from } from 'rxjs';
 import { UsuarioController } from './usuarios/usuario.controller';
-import { Rondas } from './rondas/rondas.entity';
-import { LogErrores } from './log-errores/log-errores.entity';
-import { Equipo } from './equipos/equipos.entity';
-import { Recetas } from './recetas/recetas.entity';
-import { EquipoReceta } from './equipo-receta/equipo-receta.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -21,7 +16,7 @@ import { EquipoReceta } from './equipo-receta/equipo-receta.entity';
       username: 'root',
       password: '',
       database: 'comiidav2',
-      entities: [Rondas,Usuarios,Error,LogErrores,Equipo,Recetas,EquipoReceta],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
     }),
