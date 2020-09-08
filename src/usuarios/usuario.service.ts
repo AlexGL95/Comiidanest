@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Usuarios } from './usuarios';
 import { Repository } from 'typeorm';
 import { CreateUsuariodto } from './dto/create-usuariodto';
+import { Equipo } from '../equipos/equipo';
 
 @Injectable()
 export class UsuarioService {
@@ -13,7 +14,7 @@ export class UsuarioService {
     ){} 
 
     async getAll():Promise<Usuarios[]> {
-        return await this.userRepository.find();
+        return await this.userRepository.find({relations:["equipo"]});
     }
 
     async createUser(newuser: CreateUsuariodto):Promise<Usuarios>{

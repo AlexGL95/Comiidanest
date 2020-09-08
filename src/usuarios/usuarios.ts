@@ -16,5 +16,5 @@ export class Usuarios {
     super:boolean;
     
     @ManyToOne(type => Equipo, Equipo=>Equipo.id)
-    equipo:number;
+    equipo:Equipo;
 }
