@@ -9,9 +9,11 @@ export class EquipoReceta {
     @PrimaryGeneratedColumn()
     id:number;
 
-    @ManyToOne(type => Equipo, Equipo=>Equipo.id)
-    equipo:number;
+    @ManyToOne(type => Equipo, Equipo=>Equipo.id)//Realacion muchos a uno con la tabla equipo columna id
+    equipo:Equipo;
 
-    @ManyToOne(type => Recetas, Recetas=>Recetas.id)
-    recetas:number;
+    @ManyToOne(type => Recetas, Recetas=>Recetas.id)//Realacion muchos a uno con la tabla Recetas columna id
+    recetas:Recetas;
+
+    
 }

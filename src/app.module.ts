@@ -7,7 +7,6 @@ import { Usuarios } from './usuarios/usuarios.entity';
 import { UsuarioService } from './usuarios/usuario.service';
 import { from } from 'rxjs';
 import { UsuarioController } from './usuarios/usuario.controller';
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({

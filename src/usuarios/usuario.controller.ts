@@ -5,6 +5,7 @@ import { response } from 'express';
 
 
 
+
 @Controller('usuarios')
 export class UsuarioController {
     
@@ -48,5 +49,4 @@ export class UsuarioController {
             response.status(HttpStatus.FORBIDDEN).json({mensaje:'Error al eliminar el usuario'});
         });
     }
-
 }
