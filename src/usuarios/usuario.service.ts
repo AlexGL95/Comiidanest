@@ -13,9 +13,13 @@ export class UsuarioService {
         private readonly userRepository: Repository<Usuarios>
     ){} 
 
+    //Recuperar todos los usuarios
+    
     async getAll():Promise<Usuarios[]> {
         return await this.userRepository.find({relations:["equipo"]});
     }
+
+    //crear nuevo usuario
 
     async createUser(newuser: CreateUsuariodto):Promise<Usuarios>{
         const nuevo = new Usuarios();
@@ -23,18 +27,20 @@ export class UsuarioService {
         nuevo.nombre=newuser.nombre;
         nuevo.pass=newuser.pass;
         nuevo.equipo=newuser.equipoid;
-
         return this.userRepository.save(nuevo)
     }
+
+    //actualizar datos del usuario
 
     async updateUsuario(idUsuario:number, usuarioActualizar: CreateUsuariodto):Promise<Usuarios>{
         const usuarioupdate = await this.userRepository.findOne(idUsuario);
         usuarioupdate.nombre=usuarioActualizar.nombre;
         usuarioupdate.pass=usuarioActualizar.pass;
         usuarioupdate.equipo=usuarioActualizar.equipoid;
-
         return await this.userRepository.save(usuarioupdate)
     }
+
+    //eliminar uduario mediante id
 
     async deleteusuario(idmensaje:number):Promise <any>{
         return await this.userRepository.delete(idmensaje);
