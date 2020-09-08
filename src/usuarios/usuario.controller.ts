@@ -18,8 +18,7 @@ export class UsuarioController {
         this.usuariosservice.createUser(createUsuarioDto).then( usuariom =>{
             response.status(HttpStatus.CREATED).json(usuariom);
         }).catch( ()=>{
-
-            response.status(HttpStatus.FORBIDDEN).json({usuariom:"Error en la creacion del usuario"});
+            response.status(HttpStatus.CONFLICT).json({usuariom:"Error en la creacion del usuario"});
         });
     }
 
