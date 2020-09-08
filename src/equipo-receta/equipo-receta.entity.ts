@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Equipo } from "src/equipos/equipo";
-import { Recetas } from '../recetas/recetas';
+import { Equipo } from "src/equipos/equipo.entity";
+import { Recetas } from '../recetas/recetas.entity';
 import { type } from "os";
 
 @Entity()
