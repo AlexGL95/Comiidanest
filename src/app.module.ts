@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Error } from './errores/error.entity.entity';
 import { Usuarios } from './usuarios/usuarios.entity';
 import { UsuarioService } from './usuarios/usuario.service';
-import { from } from 'rxjs';
 import { UsuarioController } from './usuarios/usuario.controller';
+import { RecetasModule } from './recetas/recetas.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -20,7 +20,8 @@ import { UsuarioController } from './usuarios/usuario.controller';
       synchronize: true,
       autoLoadEntities: true,
     }),
-    TypeOrmModule.forFeature([Usuarios])
+    TypeOrmModule.forFeature([Usuarios]),
+    RecetasModule
   ],
   controllers: [AppController, UsuarioController],
   providers: [AppService, UsuarioService],
