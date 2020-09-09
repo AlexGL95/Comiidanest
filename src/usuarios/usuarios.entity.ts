@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Equipo } from '../equipos/equipos.entity';
-
+import { Equipo } from '../equipos/equipo.entity';
 @Entity()
 export class Usuarios {
     @PrimaryGeneratedColumn()
@@ -15,7 +14,7 @@ export class Usuarios {
     @Column()
     super:boolean;
     
-    @ManyToOne(int => Equipo, Equipo=>Equipo.id)    //Relacion Muchos a uno con tabla equipo columna id
-    equipo:number;
+    @ManyToOne(type => Equipo, Equipo=>Equipo.id)
+    equipo:Equipo;
 
 }
