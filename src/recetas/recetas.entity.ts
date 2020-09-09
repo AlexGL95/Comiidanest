@@ -13,7 +13,7 @@ export enum Categoria{
 export class Recetas extends BaseEntity{
     
     @PrimaryGeneratedColumn()
-    @OneToMany(type => EquipoReceta, EquipoReceta => EquipoReceta.recetas) //Relacion uno a muchos con la tabla Equipo receta columna Recetaid
+    @OneToMany(type => EquipoReceta, EquipoReceta => EquipoReceta.recetas)//Relacion uno a muchos con la tabla Equipo receta columna Recetaid
     id:number;
 
     @Column()
