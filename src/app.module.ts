@@ -12,6 +12,7 @@ import { Equipo } from './equipos/equipos.entity';
 import { Recetas } from './recetas/recetas.entity';
 import { EquipoReceta } from './equipo-receta/equipo-receta.entity';
 import { RecetasModule } from './recetas/recetas.module';
+import { EquiposModule } from './equipos/equipos.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -26,7 +27,8 @@ import { RecetasModule } from './recetas/recetas.module';
       autoLoadEntities: true,
     }),
     TypeOrmModule.forFeature([Usuarios]),
-    RecetasModule
+    RecetasModule,
+    EquiposModule
   ],
   controllers: [AppController, UsuarioController],
   providers: [AppService, UsuarioService],
