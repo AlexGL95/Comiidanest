@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUsuariodto } from './dto/create-usuariodto';
 import { Usuarios } from './usuarios.entity';
-import { UsuariosRepository } from './usuario.repository';
+import { Equipo } from 'src/equipos/equipo.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -12,11 +12,9 @@ export class UsuarioService {
         @InjectRepository(UsuariosRepository)
         private userRep:UsuariosRepository,
         @InjectRepository(Usuarios)
-        private readonly userRepository: Repository<Usuarios>,
-        
-    ){
-    } 
-    
+        private userRepository: Repository<Usuarios>
+    ){} 
+
     //Recuperar todos los usuarios
     
     async getAll():Promise<Usuarios[]> {
@@ -26,6 +24,8 @@ export class UsuarioService {
     //crear nuevo usuario
     
     async createUser(newuser: CreateUsuariodto):Promise<Usuarios>{
+        const equipoPrueba = new Equipo();
+            nuevo.equipo=equipoPrueba;
         try {
             const nuevo = new Usuarios();
             const Users = await this.userRepository.findOne({ where: { nombre: `${newuser.nombre}` } });
@@ -62,7 +62,7 @@ export class UsuarioService {
         } else {
             usuarioupdate.nombre=usuarioActualizar.nombre;
             usuarioupdate.pass=usuarioActualizar.pass;
-            usuarioupdate.equipo=usuarioActualizar.equipoid;
+            //usuarioupdate.equipo=usuarioActualizar.equipoid;
             return await this.userRepository.save(usuarioupdate)
         }
         

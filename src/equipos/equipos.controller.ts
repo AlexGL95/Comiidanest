@@ -1,5 +1,7 @@
-import { Controller, Get, Put, Body, Req } from '@nestjs/common';
+import { Controller, Get, Put, Body, Req, Delete, Param, ParseIntPipe } from '@nestjs/common';
 import { EquiposService } from './equipos.service';
+import { Usuarios } from 'src/usuarios/usuarios.entity';
+import { Equipo } from './equipo.entity';
 
 @Controller('equipos')
 export class EquiposController {
@@ -10,16 +12,14 @@ export class EquiposController {
     //Aqui pega tus API
 
 
-    //API getAll.
     @Get()
-    getAll( @Req() response ) {
-        //return this.equiposService.getAll();
+    getTeams(): Promise<Usuarios[]>{
+        return this.equiposService.getTeams();
     }
 
-    //API updateDate.
-    @Put()
-    updateDate( @Req() response, @Body() newDate: Date ){
-        //return "updateDate works!";
+    @Delete('/:id')
+    deleteTeam(@Param('id', ParseIntPipe) id: number): Promise<Equipo[]> {
+        return this.equiposService.deleteTeam(id);
     }
 
 }
