@@ -6,6 +6,10 @@ export class EquiposController {
 
     constructor(private equiposService: EquiposService) {}
 
+
+    //Aqui pega tus API
+
+
     //API getAll.
     @Get()
     getAll( @Req() response ) {
