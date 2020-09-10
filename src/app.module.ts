@@ -2,11 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Error } from './errores/error.entity.entity';
 import { Usuarios } from './usuarios/usuarios.entity';
 import { UsuarioService } from './usuarios/usuario.service';
-import { from } from 'rxjs';
 import { UsuarioController } from './usuarios/usuario.controller';
+import { AuthController } from './usuarios/autenticacion/auth.controller';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -20,9 +19,9 @@ import { UsuarioController } from './usuarios/usuario.controller';
       synchronize: true,
       autoLoadEntities: true,
     }),
-    TypeOrmModule.forFeature([Usuarios])
+    TypeOrmModule.forFeature([Usuarios]),
   ],
-  controllers: [AppController, UsuarioController],
+  controllers: [AppController, UsuarioController, AuthController],
   providers: [AppService, UsuarioService],
 })
 export class AppModule {}
