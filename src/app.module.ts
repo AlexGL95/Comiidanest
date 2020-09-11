@@ -8,6 +8,9 @@ import { UsuarioController } from './usuarios/usuario.controller';
 import { AuthController } from './usuarios/autenticacion/auth.controller';
 import { EquiposModule } from './equipos/equipos.module';
 import { RecetasModule } from './recetas/recetas.module';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule} from '@nestjs/passport'
+import { JwtStrategy } from './usuarios/autenticacion/jwt.strategy';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -21,11 +24,30 @@ import { RecetasModule } from './recetas/recetas.module';
       synchronize: true,
       autoLoadEntities: true,
     }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     TypeOrmModule.forFeature([Usuarios]),
     RecetasModule,
-    EquiposModule
+    EquiposModule,
+    JwtModule.register({
+      secret:'CadenaIndecifrable',
+      signOptions:{
+        expiresIn: 3600,
+      },
+    }),
   ],
-  controllers: [AppController, UsuarioController, AuthController],
-  providers: [AppService, UsuarioService],
+  controllers: [
+    AppController, 
+    UsuarioController, 
+    AuthController,
+  ],
+  providers: [
+    AppService, 
+    UsuarioService,
+    JwtStrategy,
+  ],
+  exports:[
+    JwtStrategy,
+    PassportModule,
+  ]
 })
 export class AppModule {}
