@@ -1,7 +1,6 @@
-import { Controller, Get, Req, Post, Body, Put, Delete, Res, HttpStatus, Param } from '@nestjs/common';
+import { Controller, Get, Req, Post, Body, Put, Delete, Res, HttpStatus, Param, ValidationPipe } from '@nestjs/common';
 import { CreateUsuariodto } from './dto/create-usuariodto';
 import { UsuarioService } from './usuario.service';
-import { response } from 'express';
 
 
 
@@ -32,7 +31,7 @@ export class UsuarioController {
     }
 
     @Put(':id')
-    update(@Body() updateUsuarioDto: CreateUsuariodto, @Res() response,@Param('id') idusuario){
+    update(@Body(ValidationPipe) updateUsuarioDto: CreateUsuariodto, @Res() response,@Param('id') idusuario){
         this.usuariosservice.updateUsuario(idusuario,updateUsuarioDto).then(usuarioactualizado =>{
             response.status(HttpStatus.OK).json(usuarioactualizado);
         }).catch(()=>{
