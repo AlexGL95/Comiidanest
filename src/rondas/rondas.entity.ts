@@ -4,17 +4,17 @@ import { Entity, PrimaryGeneratedColumn, Column, Generated } from "typeorm";
 export class Rondas {
 
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
     @Column()
-    fecha_inicio:Date;
+    fecha_inicio: Date;
 
     @Column()
-    fecha_termino:Date;
+    fecha_termino: Date;
 
     @Column()
-    activa:boolean;
+    activa: boolean;
 
     @Generated()
-    numero_ronda;
+    numero_ronda: number;
 }

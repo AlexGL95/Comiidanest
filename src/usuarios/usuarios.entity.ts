@@ -1,7 +1,7 @@
+
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, Unique } from "typeorm";
 import { Equipo } from '../equipos/equipo.entity';
 import * as bcrypt from 'bcrypt';
-
 @Entity()
 export class Usuarios extends BaseEntity {
     @PrimaryGeneratedColumn()
