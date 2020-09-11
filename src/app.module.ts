@@ -8,6 +8,7 @@ import { UsuarioService } from './usuarios/usuario.service';
 import { UsuarioController } from './usuarios/usuario.controller';
 import { RecetasModule } from './recetas/recetas.module';
 import { EquiposModule } from './equipos/equipos.module';
+import { RondasModule } from './rondas/rondas.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -15,7 +16,7 @@ import { EquiposModule } from './equipos/equipos.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '',
+      password: 'Konjikinogashbell25()',
       database: 'comiidav2',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
@@ -23,7 +24,8 @@ import { EquiposModule } from './equipos/equipos.module';
     }),
     TypeOrmModule.forFeature([Usuarios]),
     RecetasModule,
-    EquiposModule
+    EquiposModule,
+    RondasModule
   ],
   controllers: [AppController, UsuarioController],
   providers: [AppService, UsuarioService],

@@ -24,6 +24,7 @@ export class UsuarioService {
     //crear nuevo usuario
 
     async createUser(newuser: CreateUsuariodto):Promise<Usuarios>{
+        const equipoPrueba = new Equipo();
         const nuevo = new Usuarios();
         const Users = await this.userRepository.findOne({ where: { nombre: `${newuser.nombre}` } });
         if (Users) {
@@ -35,7 +36,7 @@ export class UsuarioService {
             nuevo.id=0;
             nuevo.nombre=newuser.nombre;
             nuevo.pass=newuser.pass;
-            nuevo.equipo=newuser.equipoid;
+            nuevo.equipo=equipoPrueba;
             return this.userRepository.save(nuevo)
         }
        
@@ -54,7 +55,7 @@ export class UsuarioService {
         } else {
             usuarioupdate.nombre=usuarioActualizar.nombre;
             usuarioupdate.pass=usuarioActualizar.pass;
-            usuarioupdate.equipo=usuarioActualizar.equipoid;
+            //usuarioupdate.equipo=usuarioActualizar.equipoid;
             return await this.userRepository.save(usuarioupdate)
         }
         
