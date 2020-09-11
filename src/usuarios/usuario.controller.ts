@@ -1,4 +1,5 @@
-import { Controller, Get, Req, Post, Body, Put, Delete, Res, HttpStatus, Param, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Req, Post, Body, Put, Delete, Res, HttpStatus, Param, ValidationPipe, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CreateUsuariodto } from './dto/create-usuariodto';
 import { UsuarioService } from './usuario.service';
 
@@ -22,6 +23,7 @@ export class UsuarioController {
     }
 
     @Get()
+    @UseGuards(AuthGuard())
     getall(@Res() response){
         this.usuariosservice.getAll().then(usuarioslist =>{
             response.status(HttpStatus.OK).json(usuarioslist);
