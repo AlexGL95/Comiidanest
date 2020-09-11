@@ -1,7 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Equipo } from "src/equipos/equipo.entity";
+import { Entity, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Equipo } from "../equipos/equipos.entity";
 import { Recetas } from '../recetas/recetas.entity';
-import { type } from "os";
 
 @Entity()
 export class EquipoReceta {
