@@ -9,9 +9,9 @@ export class Equipofake extends BaseEntity{
     @PrimaryGeneratedColumn()
     @OneToMany(type => EquipoReceta, EquipoReceta => EquipoReceta.equipo) //Relacion uno a muchos con la tabla equiporeceta con la columna equipoid
     @OneToMany(type => Usuarios, Usuarios => Usuarios.equipo)            //Relacion uno a muchos con la tabla Usuatios columna equipoid
-    id:number;
+    id: number;
 
     @Column()
-    fecha:string;
+    fecha: Date;
 
 }

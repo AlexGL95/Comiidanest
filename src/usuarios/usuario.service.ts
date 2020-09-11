@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUsuariodto } from './dto/create-usuariodto';
 import { Usuarios } from './usuarios.entity';
+import { UsuariosRepository } from './usuario.repository';
+import { Rondas } from '../rondas/rondas.entity';
 import { Equipo } from 'src/equipos/equipo.entity';
 
 @Injectable()
 export class UsuarioService {
 
     constructor(
-        @InjectRepository(UsuariosRepository)
-        private userRep:UsuariosRepository,
         @InjectRepository(Usuarios)
         private userRepository: Repository<Usuarios>
     ){} 
@@ -53,25 +53,27 @@ export class UsuarioService {
 
     async updateUsuario(idUsuario:number, usuarioActualizar: CreateUsuariodto):Promise<Usuarios>{
         const usuarioupdate = await this.userRepository.findOne(idUsuario);
-        const Users = await this.userRepository.findOne({ where: { nombre: `${usuarioActualizar.nombre}` } });
-        if (Users) {
+        const Users = await this.userRepository.find({ where: { nombre: `${usuarioActualizar.nombre}` } });
+        if (Users.length > 1) {
             const err = new Error;
             err.name = "T-805";
             err.message = 'Usuario Duplicado';
             throw err;
         } else {
             usuarioupdate.nombre=usuarioActualizar.nombre;
-            usuarioupdate.pass=usuarioActualizar.pass;
-            //usuarioupdate.equipo=usuarioActualizar.equipoid;
+            usuarioupdate.equipo=usuarioActualizar.equipoid;
+            const bcrypt = require ("bcrypt");
+            usuarioupdate.salt = await bcrypt.genSalt();
+            usuarioupdate.pass = await bcrypt.hash(usuarioActualizar.pass, usuarioupdate.salt);
             return await this.userRepository.save(usuarioupdate)
         }
-        
     }
 
     //eliminar uduario mediante id
 
-    async deleteusuario(idmensaje:number):Promise <any>{
-        return await this.userRepository.delete(idmensaje);
+    async deleteusuario(idusuario:number):Promise <any>{
+       
+        return await this.userRepository.delete(idusuario);
     }
     
     //Validar contraseña

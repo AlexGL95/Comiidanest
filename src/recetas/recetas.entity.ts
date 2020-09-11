@@ -16,7 +16,7 @@ export class Recetas extends BaseEntity{
     @OneToMany(type => EquipoReceta, EquipoReceta => EquipoReceta.recetas)//Relacion uno a muchos con la tabla Equipo receta columna Recetaid
     id:number;
 
-    @Column()
+    @Column("varchar", { length: 30 })
     nombre:string;
 
     @Column()

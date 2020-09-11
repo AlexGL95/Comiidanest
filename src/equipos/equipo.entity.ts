@@ -1,9 +1,9 @@
-import { Entity, Generated, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity } from "typeorm";
+import { Entity, Generated, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Usuarios } from '../usuarios/usuarios.entity';
 import { EquipoReceta } from '../equipo-receta/equipo-receta.entity';
 import { type } from "os";
 @Entity()
-export class Equipo extends BaseEntity{
+export class Equipo {
 
     @PrimaryGeneratedColumn()
     @OneToMany(type => EquipoReceta, EquipoReceta => EquipoReceta.equipo)
@@ -11,6 +11,6 @@ export class Equipo extends BaseEntity{
     id:number;
 
     @Column()
-    fecha:string;
+    fecha:Date;
 
 }
