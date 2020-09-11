@@ -1,5 +1,6 @@
-import { Controller, Get, Put, Body, Req } from '@nestjs/common';
+import { Controller, Get, Put, Body, Req, HttpStatus } from '@nestjs/common';
 import { EquiposService } from './equipos.service';
+import { updateDateDto } from './dtos/updateDate.dto';
 
 @Controller('equipos')
 export class EquiposController {
@@ -11,14 +12,25 @@ export class EquiposController {
     //API getAll.
     @Get()
     getAll( @Req() response ) {
-        return this.equiposService.getAll();
+        return this.equiposService.getAll()
+            .then( equiposArr => {
+                response.status(HttpStatus.OK).json(equiposArr);
+            } )
+            .catch( err => {
+                response.status(HttpStatus.CONFLICT).json(err);
+            } );
     }
 
     //API updateDate.
     @Put()
-    updateDate( @Req() response, @Body() newDate: Date ){
-        return "updateDate works!";
-        //return "updateDate works!";
+    updateDate( @Req() response, @Body() newDate: updateDateDto ){
+        return this.equiposService.updateDate(newDate)
+            .then( receta => {
+                response.status(HttpStatus.OK).json(receta);
+            } )
+            .catch( err => {
+                response.status(HttpStatus.CONFLICT).json(err);
+            } );
     }
 
 }
