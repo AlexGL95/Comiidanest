@@ -56,30 +56,36 @@ export class RondasService {
            // }
         //}
 
-        for(let i = 0; i<foundEquipo.length; i++){
-            let d1 = moment().add(10, 'days').format('MMM Do YY');
-            let d2 = moment(foundRondas[3].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
-            let d3 = moment(foundRondas[3].fecha_termino, 'MMM Do YY').format('MMM Do YY');
-            let d4 = moment(foundRondas[3].fecha_inicio, 'MMM Do YY').add(g, 'days').format('MMM Do YY');
-            if (d2===6 || d2 === 0){
-                i--;
-            };
-            if(d4.indexOf(d1)===0){
-                if(d3.indexOf(d1)===-1){
-                    rondas.activa = true;
-                    i = foundEquipo.length;
+        for(let j = 0; j<foundRondas.length; j++){
+            g=0;
+            for(let i = 0; i<foundEquipo.length; i++){
+                let d1 = moment().add(34, 'days').format('MMM Do YY');
+                let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
+                let d3 = moment(foundRondas[j].fecha_termino, 'MMM Do YY').format('MMM Do YY');
+                let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').format('MMM Do YY');
+                if (d2===6 || d2 === 0){
+                    i--;
+                };
+                if(d4.indexOf(d1)===0){
+                    if(d3.indexOf(d4)!==0){
+                        rondas.activa = true;
+                        i = foundEquipo.length;
+                    }else{
+                        rondas.activa = false;
+                        i = foundEquipo.length;
+                    }
                 }else{
                     rondas.activa = false;
                 }
-            }else{
-                rondas.activa = false;
+                
+                g++
+                console.log(d2)
             }
-            
-            g++
-            console.log(d2)
+            foundRondas[j].activa = rondas.activa;
+            await this.rondasRepository.save(foundRondas[j]);
         }
-        foundRondas[3].activa = rondas.activa;
-        await this.rondasRepository.save(foundRondas[3]);
+        
+        
         
         console.log(rondas.activa, array);
         return foundRondas;
