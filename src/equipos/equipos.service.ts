@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equipo } from './equipo.entity';
+import { Equipo } from './equipos.entity';
+import { Usuarios } from '../usuarios/usuarios.entity';
+import { EquipoReceta } from '../equipo-receta/equipo-receta.entity';
 import { Repository } from 'typeorm';
 import { Equipos } from './interfaces/equipos.interface';
 import { Usuarios } from 'src/usuarios/usuarios.entity';
@@ -14,6 +16,8 @@ export class EquiposService {
         private equiposRepository: Repository<Equipo>,
         @InjectRepository(Usuarios)
         private usuariosRepository: Repository<Usuarios>,
+        @InjectRepository(EquipoReceta)
+        private equipos_recetasRepository: Repository<EquipoReceta>,
     ) {}
 
     //Aqui pega tus apis con la entidad Equipo

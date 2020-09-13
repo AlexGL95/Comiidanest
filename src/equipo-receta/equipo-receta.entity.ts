@@ -14,5 +14,4 @@ export class EquipoReceta {
     @ManyToOne(type => Recetas, Recetas=>Recetas.id)//Realacion muchos a uno con la tabla Recetas columna id
     recetas:Recetas;
 
-    
 }
