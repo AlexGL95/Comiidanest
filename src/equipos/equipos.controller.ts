@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body, Req, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Put, Body, Res, HttpStatus } from '@nestjs/common';
 import { EquiposService } from './equipos.service';
 import { updateDateDto } from './dtos/updateDate.dto';
 
@@ -11,8 +11,8 @@ export class EquiposController {
 
     //API getAll.
     @Get()
-    getAll( @Req() response ) {
-        return this.equiposService.getAll()
+    getAll( @Res() response ) {
+        this.equiposService.getAll()
             .then( equiposArr => {
                 response.status(HttpStatus.OK).json(equiposArr);
             } )
@@ -23,10 +23,10 @@ export class EquiposController {
 
     //API updateDate.
     @Put()
-    updateDate( @Req() response, @Body() newDate: updateDateDto ){
-        return this.equiposService.updateDate(newDate)
-            .then( receta => {
-                response.status(HttpStatus.OK).json(receta);
+    updateDate( @Res() response, @Body() newDate: updateDateDto ){
+        this.equiposService.updateDate(newDate)
+            .then( equipoModified => {
+                response.status(HttpStatus.OK).json(equipoModified);
             } )
             .catch( err => {
                 response.status(HttpStatus.CONFLICT).json(err);
