@@ -2,11 +2,15 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Error } from './errores/error.entity.entity';
 import { Usuarios } from './usuarios/usuarios.entity';
 import { UsuarioService } from './usuarios/usuario.service';
 import { UsuarioController } from './usuarios/usuario.controller';
+import { AuthController } from './usuarios/autenticacion/auth.controller';
+import { EquiposModule } from './equipos/equipos.module';
 import { RecetasModule } from './recetas/recetas.module';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule} from '@nestjs/passport'
+import { JwtStrategy } from './usuarios/autenticacion/jwt.strategy';
 import { EquiposModule } from './equipos/equipos.module';
 import { RondasModule } from './rondas/rondas.module';
 @Module({
@@ -22,12 +26,32 @@ import { RondasModule } from './rondas/rondas.module';
       synchronize: true,
       autoLoadEntities: true,
     }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     TypeOrmModule.forFeature([Usuarios]),
     RecetasModule,
     EquiposModule,
+    JwtModule.register({
+      secret:'CadenaIndecifrable',
+      signOptions:{
+        expiresIn: 3600,
+      },
+    }),
+    EquiposModule,
     RondasModule
   ],
-  controllers: [AppController, UsuarioController],
-  providers: [AppService, UsuarioService],
+  controllers: [
+    AppController, 
+    UsuarioController, 
+    AuthController,
+  ],
+  providers: [
+    AppService, 
+    UsuarioService,
+    JwtStrategy,
+  ],
+  exports:[
+    JwtStrategy,
+    PassportModule,
+  ]
 })
 export class AppModule {}
