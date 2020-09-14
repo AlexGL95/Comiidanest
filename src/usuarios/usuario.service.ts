@@ -24,8 +24,6 @@ export class UsuarioService {
     //crear nuevo usuario
     
     async createUser(newuser: CreateUsuariodto):Promise<Usuarios>{
-        const equipoPrueba = new Equipo();
-            nuevo.equipo=equipoPrueba;
         try {
             const nuevo = new Usuarios();
             const Users = await this.userRepository.findOne({ where: { nombre: `${newuser.nombre}` } });

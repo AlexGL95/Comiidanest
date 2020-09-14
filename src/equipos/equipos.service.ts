@@ -1,11 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equipo } from './equipos.entity';
-import { Usuarios } from '../usuarios/usuarios.entity';
 import { EquipoReceta } from '../equipo-receta/equipo-receta.entity';
 import { Equipo } from './equipo.entity';
 import { Repository } from 'typeorm';
-import { Equipos } from './interfaces/equipos.interface';
+import { EquiposInterface } from './interfaces/equipos.interface';
 import { Usuarios } from 'src/usuarios/usuarios.entity';
 import moment = require('moment');
 

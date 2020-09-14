@@ -11,7 +11,6 @@ import { RecetasModule } from './recetas/recetas.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule} from '@nestjs/passport'
 import { JwtStrategy } from './usuarios/autenticacion/jwt.strategy';
-import { EquiposModule } from './equipos/equipos.module';
 import { RondasModule } from './rondas/rondas.module';
 @Module({
   imports: [
@@ -20,7 +19,7 @@ import { RondasModule } from './rondas/rondas.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'Konjikinogashbell25()',
+      password: '',
       database: 'comiidav2',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
