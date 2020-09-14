@@ -8,7 +8,6 @@ export class EquiposController {
 
     constructor(private equiposService: EquiposService) {}
 
-
     //Aqui pega tus API
 
 

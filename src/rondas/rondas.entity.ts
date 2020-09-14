@@ -4,7 +4,7 @@ import { Entity, PrimaryGeneratedColumn, Column, Generated } from "typeorm";
 export class Rondas {
 
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
     @Column()
     fecha_inicio:string;
@@ -13,8 +13,8 @@ export class Rondas {
     fecha_termino:string;
 
     @Column()
-    activa:boolean;
+    activa: boolean;
 
     @Generated()
-    numero_ronda;
+    numero_ronda: number;
 }
