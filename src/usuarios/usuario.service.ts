@@ -5,17 +5,16 @@ import { CreateUsuariodto } from './dto/create-usuariodto';
 import { Usuarios } from './usuarios.entity';
 import { UsuariosRepository } from './usuario.repository';
 import { Rondas } from '../rondas/rondas.entity';
+import { Equipo } from 'src/equipos/equipo.entity';
 
 @Injectable()
 export class UsuarioService {
 
     constructor(
         @InjectRepository(Usuarios)
-        private readonly userRepository: Repository<Usuarios>,
-        
-    ){
-    } 
-    
+        private userRepository: Repository<Usuarios>
+    ){} 
+
     //Recuperar todos los usuarios
     
     async getAll():Promise<Usuarios[]> {
@@ -25,6 +24,8 @@ export class UsuarioService {
     //crear nuevo usuario
     
     async createUser(newuser: CreateUsuariodto):Promise<Usuarios>{
+        const equipoPrueba = new Equipo();
+            nuevo.equipo=equipoPrueba;
         try {
             const nuevo = new Usuarios();
             const Users = await this.userRepository.findOne({ where: { nombre: `${newuser.nombre}` } });

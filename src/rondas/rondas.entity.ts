@@ -7,10 +7,10 @@ export class Rondas {
     id: number;
 
     @Column()
-    fecha_inicio: Date;
+    fecha_inicio:string;
 
     @Column()
-    fecha_termino: Date;
+    fecha_termino:string;
 
     @Column()
     activa: boolean;

@@ -11,6 +11,8 @@ import { RecetasModule } from './recetas/recetas.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule} from '@nestjs/passport'
 import { JwtStrategy } from './usuarios/autenticacion/jwt.strategy';
+import { EquiposModule } from './equipos/equipos.module';
+import { RondasModule } from './rondas/rondas.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -18,7 +20,7 @@ import { JwtStrategy } from './usuarios/autenticacion/jwt.strategy';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '',
+      password: 'Konjikinogashbell25()',
       database: 'comiidav2',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
@@ -34,6 +36,8 @@ import { JwtStrategy } from './usuarios/autenticacion/jwt.strategy';
         expiresIn: 3600,
       },
     }),
+    EquiposModule,
+    RondasModule
   ],
   controllers: [
     AppController, 

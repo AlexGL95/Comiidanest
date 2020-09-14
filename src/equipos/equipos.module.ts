@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Equipo } from './equipos.entity';
 import { Usuarios } from '../usuarios/usuarios.entity';
 import { EquipoReceta } from '../equipo-receta/equipo-receta.entity';
+import { Equipo } from './equipo.entity';
+import { Usuarios } from 'src/usuarios/usuarios.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ Equipo, Usuarios, EquipoReceta ])],
