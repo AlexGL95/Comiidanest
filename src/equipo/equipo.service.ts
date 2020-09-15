@@ -48,11 +48,11 @@ export class EquiposService {
         }
 
         for (let k = 0; k < (Math.floor(array.length/2)); k++) {
-                let d1 = moment(foundTeam[foundTeam.length-1].fecha).add(k+1+s, 'days').weekday();
+                let d1 = moment().add(k+1+s, 'days').weekday();
                 if(d1===6){
                     s = s+2;
                 }
-                let d4 = moment(foundTeam[foundTeam.length-1].fecha).add(k+1+s, 'days').toDate();
+                let d4 = moment().add(k+1+s, 'days').toDate();
                 
                 
                 
@@ -60,7 +60,7 @@ export class EquiposService {
                     const teamUpdate = await this.equiposRepository.findOne(foundTeam[k].id);
                     teams.fecha = d4;
                     //vecto2[k]=teamUpdate;
-                    await this.equiposRepository.update(foundTeam[k], teams);
+                    await this.equiposRepository.update(teamUpdate, teams);
                 } else {
                     teams.fecha = d4;
                     await this.equiposRepository.save(teams);

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equipo } from '../equipo/equipo.entity';
 import { Repository } from 'typeorm';
@@ -19,14 +19,29 @@ export class RondasService {
         const foundRondas = await this.rondasRepository.find();
         const length = foundEquipo.length;
         const rondas = new Rondas();
-        const array = [];
+        let vectoDate = [];
+
+        let s = 0;
+        if(!foundRondas[0]){
+            for(let k = 0; k<foundEquipo.length; k++){
+                let d1 = moment().add(k+1+s, 'days').weekday();
+                if(d1===6){
+                    s = s+2;
+                }
+                let d4 = moment().add(k+1+s, 'days').toDate();
+                vectoDate[k] = d4;
+            }
+            console.log(vectoDate);
+            console.log()
+        }
         
-        rondas.fecha_inicio = foundEquipo[0].fecha;
-        rondas.fecha_final = foundEquipo[length-1].fecha;
-        rondas.activa = false;
         
-        await this.rondasRepository.save(rondas);
-        console.log(rondas.activa);
+        //rondas.fecha_inicio = foundEquipo[0].fecha;
+        //rondas.fecha_final = foundEquipo[length-1].fecha;
+        //rondas.activa = false;
+        
+        //await this.rondasRepository.save(rondas);
+        //console.log(rondas.activa);
         return foundRondas;
     }
 
@@ -85,6 +100,15 @@ export class RondasService {
         
         
         console.log(rondas.activa, array);
+        return foundRondas;
+    }
+
+    async deleteRondas(id: number): Promise<Rondas[]> {
+        const result = await this.rondasRepository.delete(id);
+        if (result.affected === 0) {
+            throw new NotFoundException(`User with ID "${id}" not found`);
+        }
+        const foundRondas= await this.rondasRepository.find();
         return foundRondas;
     }
 }

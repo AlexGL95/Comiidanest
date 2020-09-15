@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, ParseIntPipe } from '@nestjs/common';
 import { RondasService } from './ronda.service';
 import { Rondas } from './ronda.entity';
 
@@ -14,5 +14,10 @@ export class RondasController {
     @Get()
     getRondas(): Promise<Rondas[]>{
         return this.rondasService.getRondas();
+    }
+
+    @Delete('/:id')
+    deleteTeam(@Param('id', ParseIntPipe) id: number): Promise<Rondas[]> {
+        return this.rondasService.deleteRondas(id);
     }
 }
