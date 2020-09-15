@@ -2,16 +2,16 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Usuarios } from './usuarios/usuarios.entity';
-import { UsuarioService } from './usuarios/usuario.service';
-import { UsuarioController } from './usuarios/usuario.controller';
-import { AuthController } from './usuarios/autenticacion/auth.controller';
-import { EquiposModule } from './equipos/equipos.module';
-import { RecetasModule } from './recetas/recetas.module';
+import { Usuarios } from './usuario/usuario.entity';
+import { UsuarioService } from './usuario/usuario.service';
+import { UsuarioController } from './usuario/usuario.controller';
+import { AuthController } from './usuario/autenticacion/auth.controller';
+import { EquiposModule } from './equipo/equipo.module';
+import { RecetasModule } from './receta/receta.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule} from '@nestjs/passport'
-import { JwtStrategy } from './usuarios/autenticacion/jwt.strategy';
-import { RondasModule } from './rondas/rondas.module';
+import { JwtStrategy } from './usuario/autenticacion/jwt.strategy';
+import { RondasModule } from './ronda/ronda.module';
 
 @Module({
   imports: [
