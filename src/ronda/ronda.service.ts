@@ -20,8 +20,6 @@ export class RondasService {
         const length = foundEquipo.length;
         const rondas = new Rondas();
         const array = [];
-        let d1 = moment(foundEquipo[length-1].fecha, 'MMM Do YY').fromNow();
-        let d2 = moment().format('MMM Do YY');
         
         rondas.fecha_inicio = foundEquipo[0].fecha;
         rondas.fecha_final = foundEquipo[length-1].fecha;
