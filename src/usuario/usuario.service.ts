@@ -64,11 +64,9 @@ export class UsuarioService {
         }
     }
 
-    //eliminar uduario mediante id
-
-    async deleteusuario(idusuario:number):Promise <any>{
-       
-        return await this.userRepository.delete(idusuario);
+    //Metodo para eliminar usuario mediante su Id.
+    async deleteUsuario( id: number ): Promise <any> {
+        return await this.userRepository.delete(id)
     }
     
     //Validar contraseña
