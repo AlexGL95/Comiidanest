@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { EquiposInterface } from './interface/equipos.interface';
 import { Usuarios } from 'src/usuario/usuario.entity';
 import moment = require('moment');
+import { Moment } from 'moment';
 import { updateDateDto } from './dto/updateDate.dto';
 
 @Injectable()
@@ -26,11 +27,14 @@ export class EquiposService {
         const foundTeam = await this.equiposRepository.find();
         const arreglo = [];
         const teams = new Equipo();
+        const emptyteams = new Equipo();
         let s = 0;
         let vecto: Usuarios[]=[];
+        let vecto2: Equipo[]=[];
+        let date = new Date();
 
         const array = found;
-        console.log(array.length);
+        
 
         arreglo[0] = Math.random() * array.length;
 
@@ -44,30 +48,42 @@ export class EquiposService {
         }
 
         for (let k = 0; k < (Math.floor(array.length/2)); k++) {
-                let d1 = moment().add(k+1, 'days').weekday()
+                let d1 = moment(foundTeam[foundTeam.length-1].fecha).add(k+1+s, 'days').weekday();
                 if(d1===6){
-                    s = 2;
+                    s = s+2;
                 }
-                let d4 = moment().add(k+1+s, 'days').format('LLLL');
+                let d4 = moment(foundTeam[foundTeam.length-1].fecha).add(k+1+s, 'days').toDate();
+                
+                
                 
                 if (foundTeam[k]) {
                     const teamUpdate = await this.equiposRepository.findOne(foundTeam[k].id);
-                    teamUpdate.fecha = d4;
-                    await this.equiposRepository.update(foundTeam[k], teamUpdate);
+                    teams.fecha = d4;
+                    //vecto2[k]=teamUpdate;
+                    await this.equiposRepository.update(foundTeam[k], teams);
                 } else {
                     teams.fecha = d4;
                     await this.equiposRepository.save(teams);
                 }
                 for (let f = k*2; f < (k*2)+2; f++) {
+                    const foundTeamActual = await this.equiposRepository.find()
                     const userUpdate = await this.usuariosRepository.findOne(array[arreglo[f]].id, {relations:["equipo"]});
-                    userUpdate.equipo = foundTeam[k];
-                    await this.usuariosRepository.save(userUpdate);
+                    userUpdate.equipo = foundTeamActual[k];
                     vecto[f] = userUpdate;
                 }
-                
+                console.log(array.length);
+        }
+
+        if((array.length%2)!==0){
+            const userUpdate2 = await this.usuariosRepository.findOne(array[arreglo[found.length-1]].id, {relations:["equipo"]});
+            userUpdate2.equipo = null;
+            vecto[found.length-1] = userUpdate2;
         }
         
-        return vecto;
+        console.log(vecto);
+        console.log(arreglo);
+        
+        return await this.usuariosRepository.save(vecto);
     }
 
     async deleteTeam(id: number): Promise<Equipo[]> {
@@ -80,7 +96,7 @@ export class EquiposService {
     }
 
     //Metodo que retorna los objetos equipo de manera organizada
-    async getAll() {
+    async getAll() {//: Promise<EquiposInterface[]>  {
 
         //1.-Crea la fecha actual
         let fechaActual = new Date();
@@ -92,49 +108,61 @@ export class EquiposService {
         //3.-Llama todos los equipos
         let equiposTemp = await this.equiposRepository.find();
 
-        //4.-Compara el dia y mes de cada equipos con la actual y cuenta los equipos que estan activos bajo esta condicion
-        let nEquipos: number = 0;
-        equiposTemp.forEach( equipo => {
-            if( (equipo.fecha.getMonth() <= fechaComparacion.getMonth()) && (equipo.fecha.getDate() > fechaComparacion.getDate()) ) {
-                nEquipos += 1;
+        //4.-Si hay equipos, continua, si no, envia un error
+        if ( equiposTemp.length > 0 ) {
+            
+            //5.-Compara el dia y mes de cada equipos con la actual y cuenta los equipos que estan activos bajo esta condicion
+            let nEquipos: number = 0;
+            equiposTemp.forEach( equipo => {
+                let fechaEquipo = new Date(equipo.fecha);
+                if( (fechaEquipo.getMonth() <= fechaComparacion.getMonth()) && (fechaEquipo.getDate() > fechaComparacion.getDate()) ) {
+                    nEquipos += 1;
+                }
+            } );
+
+            //6.-Crea array de objetos json por cada equipo que cumpla lo anterior
+            let equiposArr: EquiposInterface[] = [];
+            for (let m = 0; m < nEquipos; m++) {
+
+                //7.-Consulta la fecha del equipo
+                let fecha: Date = new Date(equiposTemp[m].fecha);
+
+                //8.-Consulta en usuarios los usuarios con el id del equipo
+                let usuariosEnEquipo = await this.usuariosRepository.find( { where: { equipo: `${m+1}` } } );
+
+                //9.-Genera un arreglo con los integrantes del equipo
+                let integrantesArr: string[] = [];
+                for (let n = 0; n < usuariosEnEquipo.length; n++) {
+                    integrantesArr.push( `${usuariosEnEquipo[n].nombre}` );
+                }
+
+                //10.-Consulta la tabla de equipo_receta y extrae las recetas que contengan en equipoId el equipo
+                let recetasEnEquipo = await this.equipos_recetasRepository.find( { relations:["recetas"], where: { equipo: `${m+1}` } });
+
+                //11.-Genera un arreglo con los nombres de las recetas asignadas a un equipo
+                let recetasArr: string[] = [];
+                for (let n = 0; n < recetasEnEquipo.length; n++) {
+                    recetasArr.push( `${recetasEnEquipo[n].recetas.nombre}` );
+                }
+                
+                //12.-Guarda el objeto en un arreglo de equipos a imprimir
+                let temp: EquiposInterface = {
+                    nombre: fecha,
+                    integrantes_nombres: integrantesArr,
+                    recetas_nombres: recetasArr
+                };
+                equiposArr.push(temp);
             }
-        } );
 
-        //5.-Crea array de objetos json por cada equipo que cumpla lo anterior
-        let equiposArr: EquiposInterface[] = [];
-        for (let m = 0; m < nEquipos; m++) {
+            //13.-Retorna el equipo
+            return equiposArr;
 
-            //6.-Consulta la fecha del equipo
-            let fecha: Date = equiposTemp[m].fecha;
-
-            //7.-Consulta en usuarios los usuarios con el id del equipo
-            let usuariosEnEquipo = await this.usuariosRepository.find( { where: { equipo: `${m+1}` } } );
-
-            //8.-Genera un arreglo con los integrantes del equipo
-            let integrantesArr: string[] = [];
-            for (let n = 0; n < usuariosEnEquipo.length; n++) {
-                integrantesArr.push( `${usuariosEnEquipo[n].nombre}` );
-            }
-
-            //9.-Consulta la tabla de equipo_receta y extrae las recetas que contengan en equipoId el equipo
-            let recetasEnEquipo = await this.equipos_recetasRepository.find( { relations:["recetas"], where: { equipo: `${m+1}` } });
-
-            //10.-Genera un arreglo con los nombres de las recetas asignadas a un equipo
-            let recetasArr: string[] = [];
-            for (let n = 0; n < recetasEnEquipo.length; n++) {
-                recetasArr.push( `${recetasEnEquipo[n].recetas.nombre}` );
-            }
-            //11.-Guarda el objeto en un arreglo de equipos a imprimir
-            let temp: EquiposInterface = {
-                nombre: fecha,
-                integrantes_nombres: integrantesArr,
-                recetas_nombres: recetasArr
-            };
-            equiposArr.push(temp);
-
+        } else {
+            const err = new Error;
+            err.name = "T-804";
+            err.message = 'Ronda no encontrada.';
+            throw err;
         }
-        //12.-Retorna el equipo
-        return equiposArr;
     }
 
     //Metodo que actualiza la fecha del equipo
