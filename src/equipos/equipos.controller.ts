@@ -1,22 +1,15 @@
-<<<<<<< HEAD
-import { Controller, Get, Put, Body, Req, Delete, Param, ParseIntPipe } from '@nestjs/common';
-import { EquiposService } from './equipos.service';
-import { Usuarios } from 'src/usuarios/usuarios.entity';
-import { Equipo } from './equipo.entity';
-=======
-import { Controller, Get, Put, Body, Req, HttpStatus } from '@nestjs/common';
+
+import { Controller, Get, Put, Body, Res, HttpStatus, Delete, Param, ParseIntPipe } from '@nestjs/common';
 import { EquiposService } from './equipos.service';
 import { updateDateDto } from './dtos/updateDate.dto';
->>>>>>> Master
+import { response } from 'express';
+import { Usuarios } from 'src/usuarios/usuarios.entity';
+import { Equipo } from './equipo.entity';
 
 @Controller('equipos')
 export class EquiposController {
 
     constructor(private equiposService: EquiposService) {}
-
-    //Aqui pega tus API
-
-<<<<<<< HEAD
 
     @Get()
     getTeams(): Promise<Usuarios[]>{
@@ -26,10 +19,11 @@ export class EquiposController {
     @Delete('/:id')
     deleteTeam(@Param('id', ParseIntPipe) id: number): Promise<Equipo[]> {
         return this.equiposService.deleteTeam(id);
-=======
-    //API getAll.
+    }
+
+    //API getAll.    
     @Get()
-    getAll( @Req() response ) {
+    getAll( @Res() response ) {
         return this.equiposService.getAll()
             .then( equiposArr => {
                 response.status(HttpStatus.OK).json(equiposArr);
@@ -41,7 +35,7 @@ export class EquiposController {
 
     //API updateDate.
     @Put()
-    updateDate( @Req() response, @Body() newDate: updateDateDto ){
+    updateDate( @Res() response, @Body() newDate: updateDateDto ){
         return this.equiposService.updateDate(newDate)
             .then( receta => {
                 response.status(HttpStatus.OK).json(receta);
@@ -49,7 +43,6 @@ export class EquiposController {
             .catch( err => {
                 response.status(HttpStatus.CONFLICT).json(err);
             } );
->>>>>>> Master
     }
 
 }

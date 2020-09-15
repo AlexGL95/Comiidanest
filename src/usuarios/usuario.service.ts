@@ -5,7 +5,6 @@ import { CreateUsuariodto } from './dto/create-usuariodto';
 import { Usuarios } from './usuarios.entity';
 import { UsuariosRepository } from './usuario.repository';
 import { Rondas } from '../rondas/rondas.entity';
-import { Equipo } from 'src/equipos/equipo.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -24,22 +23,6 @@ export class UsuarioService {
     //crear nuevo usuario
     
     async createUser(newuser: CreateUsuariodto):Promise<Usuarios>{
-<<<<<<< HEAD
-        const equipoPrueba = new Equipo();
-        const nuevo = new Usuarios();
-        const Users = await this.userRepository.findOne({ where: { nombre: `${newuser.nombre}` } });
-        if (Users) {
-            const err = new Error;
-            err.name = "T-805";
-            err.message = 'Usuario Duplicado';
-            throw err;
-        } else {
-            nuevo.id=0;
-            nuevo.nombre=newuser.nombre;
-            nuevo.pass=newuser.pass;
-            nuevo.equipo=equipoPrueba;
-            return this.userRepository.save(nuevo)
-=======
         try {
             const nuevo = new Usuarios();
             const Users = await this.userRepository.findOne({ where: { nombre: `${newuser.nombre}` } });
@@ -60,7 +43,6 @@ export class UsuarioService {
             }
         } catch (error) {
             console.error(error.message)
->>>>>>> Master
         }
     }
     
@@ -76,15 +58,10 @@ export class UsuarioService {
             throw err;
         } else {
             usuarioupdate.nombre=usuarioActualizar.nombre;
-<<<<<<< HEAD
-            usuarioupdate.pass=usuarioActualizar.pass;
-            //usuarioupdate.equipo=usuarioActualizar.equipoid;
-=======
             usuarioupdate.equipo=usuarioActualizar.equipoid;
             const bcrypt = require ("bcrypt");
             usuarioupdate.salt = await bcrypt.genSalt();
             usuarioupdate.pass = await bcrypt.hash(usuarioActualizar.pass, usuarioupdate.salt);
->>>>>>> Master
             return await this.userRepository.save(usuarioupdate)
         }
     }

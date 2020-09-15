@@ -6,14 +6,7 @@ import { Repository } from 'typeorm';
 import { EquiposInterface } from './interfaces/equipos.interface';
 import { Usuarios } from 'src/usuarios/usuarios.entity';
 import moment = require('moment');
-=======
-import { Equipo } from './equipos.entity';
-import { Usuarios } from '../usuarios/usuarios.entity';
-import { EquipoReceta } from '../equipo-receta/equipo-receta.entity';
-import { Repository } from 'typeorm';
-import { EquiposInterface } from './interfaces/equipos.interface';
 import { updateDateDto } from './dtos/updateDate.dto';
->>>>>>> Master
 
 @Injectable()
 export class EquiposService {
@@ -85,14 +78,9 @@ export class EquiposService {
         const foundTeam = await this.equiposRepository.find();
         return foundTeam;
     }
-=======
-        @InjectRepository(EquipoReceta)
-        private equipos_recetasRepository: Repository<EquipoReceta>,
-    ) {}
 
     //Metodo que retorna los objetos equipo de manera organizada
     async getAll() {
->>>>>>> Master
 
         //1.-Crea la fecha actual
         let fechaActual = new Date();
