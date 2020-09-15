@@ -15,7 +15,7 @@ import { UsuarioModule } from './usuario/usuario.module';
       port: 3306,
       username: 'root',
       password: '',
-      database: 'comiidav2',
+      database: 'comiidav3',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,

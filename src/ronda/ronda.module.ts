@@ -7,8 +7,7 @@ import { Rondas } from './ronda.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Equipo, Rondas])
-  ],
+    TypeOrmModule.forFeature([Equipo, Rondas])],
   controllers: [RondasController],
   providers: [RondasService]
 })
