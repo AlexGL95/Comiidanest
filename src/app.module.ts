@@ -12,6 +12,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule} from '@nestjs/passport'
 import { JwtStrategy } from './usuarios/autenticacion/jwt.strategy';
 import { RondasModule } from './rondas/rondas.module';
+=======
+import { RecetasModule } from './recetas/recetas.module';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule} from '@nestjs/passport'
+import { JwtStrategy } from './usuarios/autenticacion/jwt.strategy';
+>>>>>>> Master
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -37,6 +43,13 @@ import { RondasModule } from './rondas/rondas.module';
     }),
     EquiposModule,
     RondasModule
+=======
+    JwtModule.register({
+      secret:'CadenaIndecifrable',
+      signOptions:{
+        expiresIn: 3600,
+      },
+    }),
   ],
   controllers: [
     AppController, 
