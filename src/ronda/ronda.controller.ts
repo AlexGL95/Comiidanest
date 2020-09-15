@@ -15,4 +15,10 @@ export class RondasController {
     getRondas(): Promise<Rondas[]>{
         return this.rondasService.getRondas();
     }
+
+    @Get('/test')
+    testi(): Promise<Rondas>{
+        return this.rondasService.recrondas();
+    }
+
 }
