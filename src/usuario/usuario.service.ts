@@ -33,8 +33,8 @@ export class UsuarioService {
             } else {
                 nuevo.id=0;
                 nuevo.nombre=newuser.nombre;
-                nuevo.equipo=newuser.equipoid;
-                nuevo.super=false;
+                nuevo.equipo=null;
+                nuevo.super = false;
                 const bcrypt = require ("bcrypt");
                 nuevo.salt = await bcrypt.genSalt();
                 nuevo.pass = await bcrypt.hash(newuser.pass, nuevo.salt);

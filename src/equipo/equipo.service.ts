@@ -6,7 +6,6 @@ import { Repository } from 'typeorm';
 import { EquiposInterface } from './interface/equipos.interface';
 import { Usuarios } from 'src/usuario/usuario.entity';
 import moment = require('moment');
-import { Moment } from 'moment';
 import { updateDateDto } from './dto/updateDate.dto';
 
 @Injectable()
