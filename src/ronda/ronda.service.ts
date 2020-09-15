@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equipo } from 'src/equipo/equipo.entity';
+import { Equipo } from '../equipo/equipo.entity';
 import { Repository } from 'typeorm';
 import moment = require('moment');
 import { Rondas } from './ronda.entity';
@@ -24,7 +24,7 @@ export class RondasService {
         let d2 = moment().format('MMM Do YY');
         
         rondas.fecha_inicio = foundEquipo[0].fecha;
-        rondas.fecha_termino = foundEquipo[length-1].fecha;
+        rondas.fecha_final = foundEquipo[length-1].fecha;
         rondas.activa = false;
         
         await this.rondasRepository.save(rondas);
@@ -60,7 +60,7 @@ export class RondasService {
             for(let i = 0; i<foundEquipo.length; i++){
                 let d1 = moment().add(34, 'days').format('MMM Do YY');
                 let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
-                let d3 = moment(foundRondas[j].fecha_termino, 'MMM Do YY').format('MMM Do YY');
+                let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').format('MMM Do YY');
                 let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').format('MMM Do YY');
                 if (d2===6 || d2 === 0){
                     i--;
