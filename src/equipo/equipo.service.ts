@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { EquiposInterface } from './interface/equipos.interface';
 import { Usuarios } from 'src/usuario/usuario.entity';
 import moment = require('moment');
+import { Moment } from 'moment';
 import { updateDateDto } from './dto/updateDate.dto';
 
 @Injectable()
@@ -26,11 +27,14 @@ export class EquiposService {
         const foundTeam = await this.equiposRepository.find();
         const arreglo = [];
         const teams = new Equipo();
+        const emptyteams = new Equipo();
         let s = 0;
         let vecto: Usuarios[]=[];
+        let vecto2: Equipo[]=[];
+        let date = new Date();
 
         const array = found;
-        console.log(array.length);
+        
 
         arreglo[0] = Math.random() * array.length;
 
@@ -44,30 +48,42 @@ export class EquiposService {
         }
 
         for (let k = 0; k < (Math.floor(array.length/2)); k++) {
-                let d1 = moment().add(k+1, 'days').weekday()
+                let d1 = moment(foundTeam[foundTeam.length-1].fecha).add(k+1+s, 'days').weekday();
                 if(d1===6){
-                    s = 2;
+                    s = s+2;
                 }
-                let d4 = moment().add(k+1+s, 'days').format('LLLL');
+                let d4 = moment(foundTeam[foundTeam.length-1].fecha).add(k+1+s, 'days').toDate();
+                
+                
                 
                 if (foundTeam[k]) {
                     const teamUpdate = await this.equiposRepository.findOne(foundTeam[k].id);
-                    teamUpdate.fecha = d4;
-                    await this.equiposRepository.update(foundTeam[k], teamUpdate);
+                    teams.fecha = d4;
+                    //vecto2[k]=teamUpdate;
+                    await this.equiposRepository.update(foundTeam[k], teams);
                 } else {
                     teams.fecha = d4;
                     await this.equiposRepository.save(teams);
                 }
                 for (let f = k*2; f < (k*2)+2; f++) {
+                    const foundTeamActual = await this.equiposRepository.find()
                     const userUpdate = await this.usuariosRepository.findOne(array[arreglo[f]].id, {relations:["equipo"]});
-                    userUpdate.equipo = foundTeam[k];
-                    await this.usuariosRepository.save(userUpdate);
+                    userUpdate.equipo = foundTeamActual[k];
                     vecto[f] = userUpdate;
                 }
-                
+                console.log(array.length);
+        }
+
+        if((array.length%2)!==0){
+            const userUpdate2 = await this.usuariosRepository.findOne(array[arreglo[found.length-1]].id, {relations:["equipo"]});
+            userUpdate2.equipo = null;
+            vecto[found.length-1] = userUpdate2;
         }
         
-        return vecto;
+        console.log(vecto);
+        console.log(arreglo);
+        
+        return await this.usuariosRepository.save(vecto);
     }
 
     async deleteTeam(id: number): Promise<Equipo[]> {

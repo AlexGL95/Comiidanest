@@ -10,7 +10,7 @@ export class EquiposController {
 
     constructor(private equiposService: EquiposService) {}
 
-    @Get()
+    @Get('/random')
     getTeams(): Promise<Usuarios[]>{
         return this.equiposService.getTeams();
     }
