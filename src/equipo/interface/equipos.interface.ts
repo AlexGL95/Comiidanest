@@ -1,5 +1,5 @@
 export interface EquiposInterface {
-    nombre: Date;
+    nombre: string;
     integrantes_nombres: string[];
     recetas_nombres: string[]; 
   }

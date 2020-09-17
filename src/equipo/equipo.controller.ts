@@ -15,9 +15,9 @@ export class EquiposController {
         return this.equiposService.getTeams();
     }
 
-    @Delete('/:id')
-    deleteTeam(@Param('id', ParseIntPipe) id: number): Promise<Equipo[]> {
-        return this.equiposService.deleteTeam(id);
+    @Delete()
+    deleteTeam(): Promise<Equipo> {
+        return this.equiposService.deleteTeam();
     }
 
     //API getAll.    

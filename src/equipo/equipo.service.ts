@@ -51,7 +51,7 @@ export class EquiposService {
                 if(d1===6){
                     s = s+2;
                 }
-                let d4 = moment().add(k+1+s, 'days').toDate();
+                let d4 = moment().add(k+1+s, 'days').format('MMM Do YY');
                 
                 
                 
@@ -59,7 +59,7 @@ export class EquiposService {
                     const teamUpdate = await this.equiposRepository.findOne(foundTeam[k].id);
                     teams.fecha = d4;
                     //vecto2[k]=teamUpdate;
-                    await this.equiposRepository.update(foundTeam[k], teams);
+                    await this.equiposRepository.update(teamUpdate, teams);
                 } else {
                     teams.fecha = d4;
                     await this.equiposRepository.save(teams);
@@ -85,13 +85,25 @@ export class EquiposService {
         return await this.usuariosRepository.save(vecto);
     }
 
-    async deleteTeam(id: number): Promise<Equipo[]> {
-        const result = await this.equiposRepository.delete(id);
-        if (result.affected === 0) {
-            throw new NotFoundException(`User with ID "${id}" not found`);
+    //eliminar equipo
+    async deleteTeam(): Promise<Equipo> {
+        const result = await this.equiposRepository.find();
+        console.log(result);
+        if (result) {
+            let eaux =result[result.length-1];            //variable auxiliar para retornar el equipo eliminado y encontrar el ultimo equipo de la tabla
+            this.equiposRepository.delete(eaux.id);    //elimina el equipo con el id
+            return eaux;  
+        }else{
+            throw new NotFoundException(`No hay equipos en la base`);
         }
-        const foundTeam = await this.equiposRepository.find();
-        return foundTeam;
+    }
+
+    //crear equipo
+    async addteam():Promise<Equipo>{
+        let base = new Equipo;
+        base.fecha =  moment('Sep 22nd 01', 'MMM Do YY').format('MMM Do YY');
+        console.log(base);
+       return await this.equiposRepository.save(base);
     }
 
     //Metodo que retorna los objetos equipo de manera organizada
@@ -113,7 +125,7 @@ export class EquiposService {
             //5.-Compara el dia y mes de cada equipos con la actual y cuenta los equipos que estan activos bajo esta condicion
             let nEquipos: number = 0;
             equiposTemp.forEach( equipo => {
-                let fechaEquipo = new Date(equipo.fecha);
+                let fechaEquipo = moment(equipo.fecha, 'MMM Do YY').toDate();
                 if( (fechaEquipo.getMonth() <= fechaComparacion.getMonth()) && (fechaEquipo.getDate() > fechaComparacion.getDate()) ) {
                     nEquipos += 1;
                 }
@@ -124,7 +136,7 @@ export class EquiposService {
             for (let m = 0; m < nEquipos; m++) {
 
                 //7.-Consulta la fecha del equipo
-                let fecha: Date = new Date(equiposTemp[m].fecha);
+                let fecha = moment(equiposTemp[m].fecha, 'MMM Do YY');
 
                 //8.-Consulta en usuarios los usuarios con el id del equipo
                 let usuariosEnEquipo = await this.usuariosRepository.find( { where: { equipo: `${m+1}` } } );
@@ -146,7 +158,7 @@ export class EquiposService {
                 
                 //12.-Guarda el objeto en un arreglo de equipos a imprimir
                 let temp: EquiposInterface = {
-                    nombre: fecha,
+                    nombre: fecha.format('MMM Do YY'),
                     integrantes_nombres: integrantesArr,
                     recetas_nombres: recetasArr
                 };

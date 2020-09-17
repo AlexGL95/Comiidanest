@@ -11,6 +11,6 @@ export class Equipo extends BaseEntity{
     id:number;
 
     @Column()
-    fecha: Date;
+    fecha: string;
 
 }

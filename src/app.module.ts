@@ -6,6 +6,8 @@ import { EquiposModule } from './equipo/equipo.module';
 import { RecetasModule } from './receta/receta.module';
 import { RondasModule } from './ronda/ronda.module';
 import { UsuarioModule } from './usuario/usuario.module';
+import { EquipoRecetaModule } from './equipo_receta/equipo_receta.module';
+import { ErrorModule } from './error/error.module';
 
 @Module({
   imports: [
@@ -24,7 +26,9 @@ import { UsuarioModule } from './usuario/usuario.module';
     EquiposModule,
     UsuarioModule,
     EquiposModule,
-    RondasModule
+    RondasModule,
+    EquipoRecetaModule,
+    ErrorModule
   ],
   controllers: [
     AppController
