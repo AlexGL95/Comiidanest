@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from "typeorm";
-import { Error} from '../error/error.entity'
 import { Usuarios } from '../usuario/usuario.entity';
+import { Err } from "../error/error.entity";
 
 @Entity()
 export class LogErrores {
@@ -8,9 +8,9 @@ export class LogErrores {
     @PrimaryGeneratedColumn()
     id:number;
 
-    @OneToOne(string => Error)
+    @OneToOne(string => Err)
     @JoinColumn()
-    error_:Error;
+    error_:Err;
 
     @OneToOne(int=> Usuarios)
     @JoinColumn()
