@@ -51,7 +51,7 @@ export class EquiposService {
                 if(d1===6){
                     s = s+2;
                 }
-                let d4 = moment().add(k+1+s, 'days').toDate();
+                let d4 = moment().add(k+1+s, 'days').format('MMM Do YY');
                 
                 
                 
@@ -85,13 +85,25 @@ export class EquiposService {
         return await this.usuariosRepository.save(vecto);
     }
 
-    async deleteTeam(id: number): Promise<Equipo[]> {
-        const result = await this.equiposRepository.delete(id);
-        if (result.affected === 0) {
-            throw new NotFoundException(`User with ID "${id}" not found`);
+    //eliminar equipo
+    async deleteTeam(): Promise<Equipo> {
+        const result = await this.equiposRepository.find();
+        console.log(result);
+        if (result) {
+            let eaux =result[result.length-1];            //variable auxiliar para retornar el equipo eliminado y encontrar el ultimo equipo de la tabla
+            this.equiposRepository.delete(eaux.id);    //elimina el equipo con el id
+            return eaux;  
+        }else{
+            throw new NotFoundException(`No hay equipos en la base`);
         }
-        const foundTeam = await this.equiposRepository.find();
-        return foundTeam;
+    }
+
+    //crear equipo
+    async addteam():Promise<Equipo>{
+        let base = new Equipo;
+        base.fecha =  moment('Sep 22nd 01', 'MMM Do YY').format('MMM Do YY');
+        console.log(base);
+       return await this.equiposRepository.save(base);
     }
 
     //Metodo que retorna los objetos equipo de manera organizada
