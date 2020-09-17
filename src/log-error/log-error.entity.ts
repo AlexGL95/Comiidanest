@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from "typeorm";
-import { Error} from '../error/error.entity.entity'
+import { Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from "typeorm";
+import { Error} from '../error/error.entity'
 import { Usuarios } from '../usuario/usuario.entity';
 
 @Entity()
