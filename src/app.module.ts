@@ -7,6 +7,9 @@ import { RecetasModule } from './receta/receta.module';
 import { RondasModule } from './ronda/ronda.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { EquipoRecetaModule } from './equipo_receta/equipo_receta.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronjobModule } from './cronjob/cronjob.module';
+import { CronjobService } from './cronjob/cronjob.service';
 
 @Module({
   imports: [
@@ -26,13 +29,15 @@ import { EquipoRecetaModule } from './equipo_receta/equipo_receta.module';
     UsuarioModule,
     EquiposModule,
     RondasModule,
-    EquipoRecetaModule
+    EquipoRecetaModule,
+    ScheduleModule.forRoot(),
+    CronjobModule
   ],
   controllers: [
     AppController
   ],
   providers: [
-    AppService
+    AppService,
   ]
 })
 export class AppModule {}

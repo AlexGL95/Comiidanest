@@ -111,4 +111,31 @@ export class RondasService {
         const foundRondas= await this.rondasRepository.find();
         return foundRondas;
     }
+
+
+
+
+
+
+
+
+    //Activar Rondas
+    async activateRondas(){
+        const Rondas = await this.rondasRepository.find();
+        let now = moment();
+        console.log(now);
+        if (Rondas) {
+            for (let i = 0; i < Rondas.length; i++) {
+                const element = Rondas[i];
+                if (element.fecha_inicio ) {
+                    
+                } else {
+                    
+                }
+            }
+        } else {
+            console.log('No hay rondas nada por hacer');
+        }
+    }
+
 }
