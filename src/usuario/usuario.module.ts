@@ -18,16 +18,16 @@ import { JwtModule } from '@nestjs/jwt';
         TypeOrmModule.forFeature([Usuarios, Rondas, Equipo, EquipoReceta]),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
-        secret:'CadenaIndecifrable',
-        signOptions:{
-            expiresIn: 3600,
-        },
+            secret:'CadenaIndecifrable',
+            signOptions:{
+                expiresIn: 3600,
+            },
         }),    
         JwtModule.register({
-        secret:'CadenaIndecifrable',
-        signOptions:{
-            expiresIn: 3600,
-        },
+            secret:'CadenaIndecifrable',
+            signOptions:{
+                expiresIn: 3600,
+            },
         }),
     ],
     controllers: [UsuarioController, AuthController],

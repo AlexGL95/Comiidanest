@@ -12,6 +12,6 @@ export class Equipo extends BaseEntity{
 
     //esta fecha solo puede estar en el rango de la ronda activa
     @Column()
-    fecha: Date;
+    fecha: string;
 
 }
