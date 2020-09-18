@@ -19,11 +19,11 @@ export class RondasService {
         const foundRondas = await this.rondasRepository.find();
         const length = foundEquipo.length;
         const rondas = new Rondas();
-        let vectoDate = [];
+        let rondasDate = '';
         let vectoMoment = [];
         let s = 0;
-        let dateFinal = moment(foundRondas[foundRondas.length-1].fecha_final, 'MMM Do YY').toDate();
-        let dateActual = moment().add(14, 'days').toDate();
+        let dateFinal = moment(rondasDate, 'MMM Do YY').toDate();
+        let dateActual = moment().add(0, 'days').toDate();
 
         if (!foundRondas[0] || dateFinal < dateActual){
             for(let k = 0; k<foundEquipo.length; k++){
@@ -43,6 +43,7 @@ export class RondasService {
                 let d4 = moment(foundRondas[foundRondas.length -1].fecha_final, 'MMM Do YY').add(k+1+s, 'days');
                 vectoMoment[k] = d4.format('MMM Do YY');
             };
+
         }
 
         rondas.fecha_inicio = vectoMoment[0];
@@ -51,6 +52,8 @@ export class RondasService {
         
         await this.rondasRepository.save(rondas);
         console.log(rondas.activa);
+        rondasDate = foundRondas[foundRondas.length-1].fecha_final;
+        console.log(rondasDate);
 
         if(vectoMoment[0]<vectoMoment[1]){
             console.log("Menor")
@@ -58,6 +61,8 @@ export class RondasService {
         console.log(vectoMoment);
             
         const foundRondasActual = await this.rondasRepository.find();
+        rondasDate = foundRondasActual[foundRondasActual.length-1].fecha_final;
+        console.log(rondasDate);
 
         return foundRondasActual;
     }
