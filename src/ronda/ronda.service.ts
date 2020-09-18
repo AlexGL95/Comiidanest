@@ -19,54 +19,60 @@ export class RondasService {
         const foundRondas = await this.rondasRepository.find();
         const length = foundEquipo.length;
         const rondas = new Rondas();
-        let vectoDate = [];
-
+        let rondasDate = '';
+        let vectoMoment = [];
         let s = 0;
-        if(!foundRondas[0]){
+        let dateFinal = moment(rondasDate, 'MMM Do YY').toDate();
+        let dateActual = moment().add(0, 'days').toDate();
+
+        if (!foundRondas[0] || dateFinal < dateActual){
             for(let k = 0; k<foundEquipo.length; k++){
-                let d1 = moment().add(k+1+s, 'days').weekday();
+                let d1 = moment().add(k+15+s, 'days').weekday();
                 if(d1===6){
                     s = s+2;
                 }
-                let d4 = moment().add(k+1+s, 'days').toDate();
-                vectoDate[k] = d4;
-            }
-            console.log(vectoDate);
-            console.log()
+                let d4 = moment().add(k+15+s, 'days');
+                vectoMoment[k] = d4.format('MMM Do YY');
+            };
+        } else{
+            for(let k = 0; k<foundEquipo.length; k++){
+                let d1 = moment(foundRondas[foundRondas.length -1].fecha_final,'MMM Do YY').add(k+1+s, 'days').weekday();
+                if(d1===6){
+                    s = s+2;
+                }
+                let d4 = moment(foundRondas[foundRondas.length -1].fecha_final, 'MMM Do YY').add(k+1+s, 'days');
+                vectoMoment[k] = d4.format('MMM Do YY');
+            };
+
         }
+
+        rondas.fecha_inicio = vectoMoment[0];
+        rondas.fecha_final = vectoMoment[vectoMoment.length-1];
+        rondas.activa = false;
         
-        
-        //rondas.fecha_inicio = foundEquipo[0].fecha;
-        //rondas.fecha_final = foundEquipo[length-1].fecha;
-        //rondas.activa = false;
-        
-        //await this.rondasRepository.save(rondas);
-        //console.log(rondas.activa);
-        return foundRondas;
+        await this.rondasRepository.save(rondas);
+        console.log(rondas.activa);
+        rondasDate = foundRondas[foundRondas.length-1].fecha_final;
+        console.log(rondasDate);
+
+        if(vectoMoment[0]<vectoMoment[1]){
+            console.log("Menor")
+        };
+        console.log(vectoMoment);
+            
+        const foundRondasActual = await this.rondasRepository.find();
+        rondasDate = foundRondasActual[foundRondasActual.length-1].fecha_final;
+        console.log(rondasDate);
+
+        return foundRondasActual;
     }
 
-    async getRondas(): Promise<Rondas[]>{
+    async temporalRondas(): Promise<Rondas[]>{
         const foundEquipo = await this.equipoRepository.find();
         const foundRondas = await this.rondasRepository.find();
-        const length = foundEquipo.length;
-        const length2 = foundRondas.length;
         const rondas = new Rondas();
         const array = [];
         let g = 0;
-        let d1 = moment(foundEquipo[length-1].fecha, 'MMM Do YY').fromNow();
-        
-
-        //for(let i = 0; i<foundEquipo.length; i++){
-          //  array[i] = foundEquipo[i].fecha
-           // if(d2===array[i]){
-             //   rondas.activa = true;
-               // i = foundEquipo.length;
-            //}else if(i<foundEquipo.length-1){
-              //  rondas.activa = true;
-            //}else{
-              //  rondas.activa = false;
-           // }
-        //}
 
         for(let j = 0; j<foundRondas.length; j++){
             g=0;
@@ -89,18 +95,19 @@ export class RondasService {
                 }else{
                     rondas.activa = false;
                 }
-                
                 g++
                 console.log(d2)
             }
             foundRondas[j].activa = rondas.activa;
+            
             await this.rondasRepository.save(foundRondas[j]);
         }
-        
-        
-        
-        console.log(rondas.activa, array);
-        return foundRondas;
+        const foundRondasActual = await this.rondasRepository.find();
+        return foundRondasActual;
+    }
+
+    async getRondas(): Promise<Rondas[]>{
+        return await this.rondasRepository.find();
     }
 
     async deleteRondas(id: number): Promise<Rondas[]> {
@@ -113,8 +120,12 @@ export class RondasService {
     }
 
         //Recortador de ronda activa
+        /*
         async recrondas():Promise<Rondas>{
             let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
+            let rondaInicio = moment(ronda.fecha_inicio, 'MMM Do YY').toDate();
+            let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
+
             if (ronda) {
                 if (ronda.fecha_inicio.getDate() === (ronda.fecha_final.getDate()-1) ) {
                     ronda.fecha_final.setDate(ronda.fecha_final.getDate()-1);
@@ -129,6 +140,6 @@ export class RondasService {
                 console.log('No hay rondas activas');
                 return null;
             }
-        }
+        }*/
     
 }
