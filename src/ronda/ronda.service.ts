@@ -45,7 +45,7 @@ export class RondasService {
         return foundRondas;
     }
 
-    async getRondas(): Promise<Rondas[]>{
+    async temporalRondas(): Promise<Rondas[]>{
         const foundEquipo = await this.equipoRepository.find();
         const foundRondas = await this.rondasRepository.find();
         const length = foundEquipo.length;
@@ -91,16 +91,15 @@ export class RondasService {
                 }
                 
                 g++
-                console.log(d2)
             }
             foundRondas[j].activa = rondas.activa;
             await this.rondasRepository.save(foundRondas[j]);
         }
-        
-        
-        
-        console.log(rondas.activa, array);
         return foundRondas;
+    }
+
+    async getRondas(): Promise<Rondas[]> {
+        return await this.rondasRepository.find();
     }
 
     async deleteRondas(id: number): Promise<Rondas[]> {
@@ -110,5 +109,31 @@ export class RondasService {
         }
         const foundRondas= await this.rondasRepository.find();
         return foundRondas;
+    }
+
+    async recalcularRondas() {
+        //1.-Obten las rondas existentes
+        let rondas: Rondas[];
+        try {
+            rondas = await this.getRondas();
+        } catch (err) {
+            throw err;
+        }
+        console.log(rondas);
+
+        //2.-Busca las rondas que su fecha de inicio sea mayor a la fecha actual
+        let fechaActual = new Date();
+        let rondasAEliminar = []
+        rondas.forEach( ronda => {
+            let inicioDeRonda = moment(ronda.fecha_inicio, 'MMM Do YY').toDate();
+            if( (inicioDeRonda.getMonth() >= fechaActual.getMonth()) && (inicioDeRonda.getDate() >= fechaActual.getDate()) ) {
+
+            }
+        });
+
+        //3.-Cuentalas
+        //4.-Borrala de la base de datos
+        //5.-Crea el mismo numero de rondas
+
     }
 }

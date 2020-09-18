@@ -20,7 +20,6 @@ export class EquiposService {
         private equipos_recetasRepository: Repository<EquipoReceta>,
     ) {}
 
-    //Aqui pega tus apis con la entidad Equipo
     async getTeams(): Promise<Usuarios[]> {
         const found = await this.usuariosRepository.find({relations:["equipo"]});
         const foundTeam = await this.equiposRepository.find();
@@ -177,11 +176,11 @@ export class EquiposService {
     }
 
     //Metodo que actualiza la fecha del equipo
-    async updateDate( nuevaFecha: updateDateDto ){
-        const equipo = await this.equiposRepository.findOne(nuevaFecha.id);
+    async updateDate( update: updateDateDto ){
+        const equipo = await this.equiposRepository.findOne( { where:{ fecha: update.fechaVieja } } );
         //Si la encuentra, la actualiza, si no, retorna un error.
         if (equipo) {
-            equipo.fecha = nuevaFecha.fechaNueva;
+            equipo.fecha = update.fechaNueva;
             return await this.equiposRepository.update(equipo.id, equipo);
         } else {
             const err = new Error;
