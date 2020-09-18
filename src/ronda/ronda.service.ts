@@ -112,6 +112,26 @@ export class RondasService {
         return foundRondas;
     }
 
+        //Recortador de ronda activa
+        async recrondas():Promise<Rondas>{
+            let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
+            if (ronda) {
+                if (ronda.fecha_inicio.getDate() === (ronda.fecha_final.getDate()-1) ) {
+                    ronda.fecha_final.setDate(ronda.fecha_final.getDate()-1);
+                    console.log('Fecha inicio '+ronda.fecha_inicio);
+                    console.log('Fecha final '+ronda.fecha_final);
+                    return await this.rondasRepository.save(ronda);
+                } else {
+                    console.log('Es hoy');
+                    return null;     
+                }
+            } else {
+                console.log('No hay rondas activas');
+                return null;
+            }
+        }
+    
+
     //Activar Rondas
     async activateRondas(){
         const Rondas = await this.rondasRepository.find();

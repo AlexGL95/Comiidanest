@@ -10,6 +10,7 @@ export class Equipo extends BaseEntity{
     @OneToMany(type => Usuarios, Usuarios => Usuarios.equipo)
     id:number;
 
+    //esta fecha solo puede estar en el rango de la ronda activa
     @Column()
     fecha: string;
 
