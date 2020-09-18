@@ -9,7 +9,6 @@ import { UsuarioModule } from './usuario/usuario.module';
 import { EquipoRecetaModule } from './equipo_receta/equipo_receta.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronjobModule } from './cronjob/cronjob.module';
-import { CronjobService } from './cronjob/cronjob.service';
 import { ErrorModule } from './error/error.module';
 
 @Module({
@@ -20,7 +19,7 @@ import { ErrorModule } from './error/error.module';
       port: 3306,
       username: 'root',
       password: '',
-      database: 'comiidav2',
+      database: 'comiidav4',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
@@ -28,12 +27,10 @@ import { ErrorModule } from './error/error.module';
     RecetasModule,
     EquiposModule,
     UsuarioModule,
-    EquiposModule,
     RondasModule,
     EquipoRecetaModule,
     ScheduleModule.forRoot(),
-    CronjobModule
-    EquipoRecetaModule,
+    CronjobModule,
     ErrorModule
   ],
   controllers: [
