@@ -111,7 +111,7 @@ export class RondasService {
         const foundRondas= await this.rondasRepository.find();
         return foundRondas;
     }
-
+/*
         //Recortador de ronda activa
         async recrondas():Promise<Rondas>{
             let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
@@ -130,19 +130,27 @@ export class RondasService {
                 return null;
             }
         }
-    
+    */
 
     //Activar Rondas
     async activateRondas(){
         const Rondas = await this.rondasRepository.find();
-        let now = moment().format('MMM Do YY');
+        let now = moment().parseZone().format('MMM Do YY');
         console.log(now);
-        console.log(Rondas);
         if (Rondas.length>0) {
             for (let i = 0; i < Rondas.length; i++) {
-                const element = moment(Rondas[i].fecha_inicio).format('MMM Do YY');
-                if (element === now ) {
-                    
+                const element = Rondas[i].fecha_inicio;
+                console.log(element);
+                if (element == now) {
+                    console.log('Este si');
+                    const activ = await this.rondasRepository.findOne({ where: { activa: `1` } });
+                    if(activ){
+                        console.log(activ);
+                        activ.activa=false;
+                        await this.rondasRepository.save(activ);
+                    }
+                    Rondas[i].activa=true;
+                    await this.rondasRepository.save(Rondas[i]);
                 } else {
                     console.log('Este no');
                 }
