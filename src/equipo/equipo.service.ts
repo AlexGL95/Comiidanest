@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 import { EquiposInterface } from './interface/equipos.interface';
 import { Usuarios } from 'src/usuario/usuario.entity';
 import moment = require('moment');
-import { Moment } from 'moment';
 import { updateDateDto } from './dto/updateDate.dto';
+import { EquipoU } from './dto/equipos.dto';
 
 @Injectable()
 export class EquiposService {
@@ -22,69 +22,91 @@ export class EquiposService {
     ) {}
 
     //Aqui pega tus apis con la entidad Equipo
+
+    // Api para generar equiposd
     async getTeams(): Promise<Usuarios[]> {
+        // Obtener arreglos con informacion de las bases de datos -->
         const found = await this.usuariosRepository.find({relations:["equipo"]});
         const foundTeam = await this.equiposRepository.find();
+        //<--
+        // Arreglos para aleatorizacion -->
         const arreglo = [];
-        const teams = new Equipo();
-        const emptyteams = new Equipo();
-        let s = 0;
-        let vecto: Usuarios[]=[];
-        let vecto2: Equipo[]=[];
-        let date = new Date();
-
         const array = found;
-        
-
+        //<--
+        // Variable para excluir fines de semana -->
+        let s = 0;
+        //<--
+        // Constante que guarda un objeto con propiedad fecha -->
+        const date = new EquipoU();
+        //<--
+        // Inicializacion de arreglo con un valor random -->
         arreglo[0] = Math.random() * array.length;
-
+        //<--
+        // Aleatorizacion de números -->
         for (let i = 0; i < array.length; i++) {
+            // Guarda número aleatorios dependiendo del tamaño del arreglo de usuarios -->
             arreglo[i] = Math.round(Math.random() * (array.length - 1));
+            //<--
+            // Verificacion para que ningun numero se repita -->
             for (let j = 0; j < i; j++) {
                 if (arreglo[i] === arreglo[j]) {
                     i--;
                 }
             }
+            //<--
         }
-
+        //<--
+        // Genera Equipos y los asigna a los usuarios -->
         for (let k = 0; k < (Math.floor(array.length/2)); k++) {
-                let d1 = moment().add(k+1+s, 'days').weekday();
-                if(d1===6){
-                    s = s+2;
-                }
-                let d4 = moment().add(k+1+s, 'days').toDate();
+            // Verifica si el día siguiente es fin de semana, de ser así suma 2 días para llegar al Lunes -->
+            let d1 = moment().add(k+1+s, 'days').weekday();
+            if(d1===6){
+                s = s+2;
+            }
+            //<--
+            // Guarda la fecha en fomato MMM Do YY que devuelve un string-->
+            let d4 = moment().add(k+1+s, 'days').format('MMM Do YY');
+            //<--
+            // Verifica Si el arreglo de equipos en una posicion determinada tiene un dato -->
+            // Si tiene dato lo actualiza con la nueva fecha -->
+            if (foundTeam[k]) {
+                const teamUpdate = await this.equiposRepository.findOne(foundTeam[k].id);
+                date.fecha = d4;
+                await this.equiposRepository.update(teamUpdate, date);
+            };
+            //<--
+            // Si no lo tiene lo crea y guarda en la base de datos -->
+            if(!foundTeam[k]) {
+                let date2: EquipoU = {fecha: d4};
+                await this.equiposRepository.save(date2);
+            }
+            //<--
+            //<--
+            // Llama a los datos actualizados de la base de datos de equipos -->
+            const foundTeamActual = await this.equiposRepository.find()
+            //<--
+            
+            for (let f = k*2; f < (k*2)+2; f++) {
+                const userUpdate = await this.usuariosRepository.findOne(array[arreglo[f]].id, {relations:["equipo"]});
+                userUpdate.equipo = foundTeamActual[k];
+                await this.usuariosRepository.update(userUpdate.id, userUpdate);
                 
-                
-                
-                if (foundTeam[k]) {
-                    const teamUpdate = await this.equiposRepository.findOne(foundTeam[k].id);
-                    teams.fecha = d4;
-                    //vecto2[k]=teamUpdate;
-                    await this.equiposRepository.update(teamUpdate, teams);
-                } else {
-                    teams.fecha = d4;
-                    await this.equiposRepository.save(teams);
-                }
-                for (let f = k*2; f < (k*2)+2; f++) {
-                    const foundTeamActual = await this.equiposRepository.find()
-                    const userUpdate = await this.usuariosRepository.findOne(array[arreglo[f]].id, {relations:["equipo"]});
-                    userUpdate.equipo = foundTeamActual[k];
-                    vecto[f] = userUpdate;
-                }
-                console.log(array.length);
+            }
+            
         }
+        //<--
 
         if((array.length%2)!==0){
             const userUpdate2 = await this.usuariosRepository.findOne(array[arreglo[found.length-1]].id, {relations:["equipo"]});
             userUpdate2.equipo = null;
-            vecto[found.length-1] = userUpdate2;
+            await this.usuariosRepository.update(userUpdate2.id, userUpdate2);
         }
         
-        console.log(vecto);
-        console.log(arreglo);
+        const found2 = await this.usuariosRepository.find({relations:["equipo"]});
         
-        return await this.usuariosRepository.save(vecto);
+        return found2;
     }
+        
 
     async deleteTeam(id: number): Promise<Equipo[]> {
         const result = await this.equiposRepository.delete(id);
