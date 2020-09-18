@@ -8,9 +8,9 @@ export class CronjobService {
      private rondaser:RondasService,
     ){}
 
-    @Cron(CronExpression.EVERY_30_SECONDS)
+    @Cron(CronExpression.EVERY_DAY_AT_10AM)
     run10seconds(){
         console.log('holis');
-        this.rondaser.activateRondas();
+        this.rondaser.temporalRondas();
     }
 }

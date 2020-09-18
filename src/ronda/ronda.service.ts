@@ -23,17 +23,19 @@ export class RondasService {
         let vectoMoment = [];
         let s = 0;
         let dateFinal = moment(rondasDate, 'MMM Do YY').toDate();
-        let dateActual = moment().add(0, 'days').toDate();
+        let dateActual = moment().toDate();
 
-        if (!foundRondas[0] || dateFinal < dateActual){
+        if (foundRondas.length <= 0 || dateFinal < dateActual){
             for(let k = 0; k<foundEquipo.length; k++){
-                let d1 = moment().add(k+15+s, 'days').weekday();
+                let d1 = moment().add(k+1+s, 'days').weekday();
                 if(d1===6){
                     s = s+2;
                 }
-                let d4 = moment().add(k+15+s, 'days');
+                let d4 = moment().add(k+1+s, 'days');
                 vectoMoment[k] = d4.format('MMM Do YY');
             };
+            //Trabajar con aleatorizar
+            //Abrir ingredientes
         } else{
             for(let k = 0; k<foundEquipo.length; k++){
                 let d1 = moment(foundRondas[foundRondas.length -1].fecha_final,'MMM Do YY').add(k+1+s, 'days').weekday();
@@ -43,6 +45,7 @@ export class RondasService {
                 let d4 = moment(foundRondas[foundRondas.length -1].fecha_final, 'MMM Do YY').add(k+1+s, 'days');
                 vectoMoment[k] = d4.format('MMM Do YY');
             };
+            //CronJob
 
         }
 
@@ -52,7 +55,7 @@ export class RondasService {
         
         await this.rondasRepository.save(rondas);
         console.log(rondas.activa);
-        rondasDate = foundRondas[foundRondas.length-1].fecha_final;
+        
         console.log(rondasDate);
 
         if(vectoMoment[0]<vectoMoment[1]){
@@ -88,6 +91,7 @@ export class RondasService {
                     if(d3.indexOf(d4)!==0){
                         rondas.activa = true;
                         i = foundEquipo.length;
+
                     }else{
                         rondas.activa = false;
                         i = foundEquipo.length;
