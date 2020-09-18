@@ -125,7 +125,7 @@ export class EquiposService {
             //5.-Compara el dia y mes de cada equipos con la actual y cuenta los equipos que estan activos bajo esta condicion
             let nEquipos: number = 0;
             equiposTemp.forEach( equipo => {
-                let fechaEquipo = new Date(equipo.fecha);
+                let fechaEquipo = moment(equipo.fecha, 'MMM Do YY').toDate();
                 if( (fechaEquipo.getMonth() <= fechaComparacion.getMonth()) && (fechaEquipo.getDate() > fechaComparacion.getDate()) ) {
                     nEquipos += 1;
                 }
@@ -136,7 +136,7 @@ export class EquiposService {
             for (let m = 0; m < nEquipos; m++) {
 
                 //7.-Consulta la fecha del equipo
-                let fecha: Date = new Date(equiposTemp[m].fecha);
+                let fecha = moment(equiposTemp[m].fecha, 'MMM Do YY');
 
                 //8.-Consulta en usuarios los usuarios con el id del equipo
                 let usuariosEnEquipo = await this.usuariosRepository.find( { where: { equipo: `${m+1}` } } );
@@ -158,7 +158,7 @@ export class EquiposService {
                 
                 //12.-Guarda el objeto en un arreglo de equipos a imprimir
                 let temp: EquiposInterface = {
-                    nombre: fecha,
+                    nombre: fecha.format('MMM Do YY'),
                     integrantes_nombres: integrantesArr,
                     recetas_nombres: recetasArr
                 };
