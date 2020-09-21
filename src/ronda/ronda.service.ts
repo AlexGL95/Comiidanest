@@ -105,6 +105,7 @@ export class RondasService {
                     if(d3.indexOf(d4)!==0){
                         rondas.activa = true;
                         i = foundEquipo.length;
+
                     }else{
                         rondas.activa = false;
                         i = foundEquipo.length;
