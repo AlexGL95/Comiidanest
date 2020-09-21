@@ -57,11 +57,6 @@ export class RondasService {
         
         await this.rondasRepository.save(rondas);
         console.log(rondas.activa);
-
-        if(vectoMoment[0]<vectoMoment[1]){
-            console.log("Menor")
-        };
-        console.log(vectoMoment);
             
         const foundRondasActual = await this.rondasRepository.find();
         rondasDate = foundRondasActual[foundRondasActual.length-1].fecha_final;
@@ -74,7 +69,6 @@ export class RondasService {
         const foundEquipo = await this.equipoRepository.find();
         const foundRondas = await this.rondasRepository.find();
         const rondas = new Rondas();
-        const array = [];
         let g = 0;
 
         for(let j = 0; j<foundRondas.length; j++){
@@ -99,7 +93,6 @@ export class RondasService {
                     rondas.activa = false;
                 }
                 g++
-                console.log(d2)
             }
             foundRondas[j].activa = rondas.activa;
             

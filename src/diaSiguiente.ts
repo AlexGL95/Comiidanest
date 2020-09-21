@@ -1,9 +1,10 @@
 import moment = require('moment');
-export function diaSiguiente(k: number, s:number){
-    let d1 = moment().add(k+1+s, 'days').weekday();
+export function diaSiguiente(fecha: string, date: string){
+    let s = 0;
+    let d1 = moment(fecha, 'MMM Do YY').add(1, 'days').weekday();
     if(d1===6){
         s = s+2;
     }
 
-    let d4 = moment().add(k+1+s, 'days').format('MMM Do YY');
+    date = moment(fecha, 'MMM Do YY').add(1+s, 'days').format('MMM Do YY');
 }
