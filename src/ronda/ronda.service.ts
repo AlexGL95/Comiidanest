@@ -37,7 +37,7 @@ export class RondasService {
         let dateFinal = moment(rondasDate, 'MMM Do YY').toDate();
         let dateActual = moment().add(0, 'days').toDate();
 
-        if (!foundRondas[0] || dateFinal < dateActual){
+        if (!foundRondas[0] || (dateFinal < dateActual)){
             this.diaSiguiente(length, vectoMoment);
         } else{
             for(let k = 0; k<foundEquipo.length; k++){
@@ -74,15 +74,15 @@ export class RondasService {
         for(let j = 0; j<foundRondas.length; j++){
             g=0;
             for(let i = 0; i<foundEquipo.length; i++){
-                let d1 = moment().add(3, 'days').format('MMM Do YY');
+                let d1 = moment().add(1, 'days').toDate();
                 let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
-                let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').format('MMM Do YY');
-                let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').format('MMM Do YY');
+                let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').toDate();
+                let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').toDate();
                 if (d2===6 || d2 === 0){
                     i--;
                 };
-                if(d4.indexOf(d1)===0){
-                    if(d3.indexOf(d4)!==0){
+                if(d4 === d1){
+                    if(d3 >= d4){
                         rondas.activa = true;
                         i = foundEquipo.length;
                     }else{
@@ -92,7 +92,8 @@ export class RondasService {
                 }else{
                     rondas.activa = false;
                 }
-                g++
+                g++;
+                console.log(d1, d2, d3, d4);
             }
             foundRondas[j].activa = rondas.activa;
             
