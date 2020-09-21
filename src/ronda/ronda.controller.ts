@@ -20,10 +20,15 @@ export class RondasController {
     deleteTeam(@Param('id', ParseIntPipe) id: number): Promise<Rondas[]> {
         return this.rondasService.deleteRondas(id);
     }
-/*
+
     @Get('/test')
     testi(): Promise<Rondas>{
         return this.rondasService.recrondas();
     }
-*/
+
+    @Get('/activa')
+    temporalRondas(): Promise<Rondas[]>{
+        return this.rondasService.temporalRondas();
+    }
+
 }

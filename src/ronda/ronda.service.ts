@@ -13,27 +13,32 @@ export class RondasService {
         @InjectRepository(Rondas)
         private rondasRepository: Repository<Rondas>
     ){}
-    
+
+    diaSiguiente(length: number, vectoMoment: Array<String>){
+        let s = 0;
+        for(let k = 0; k<length; k++){
+            let d1 = moment().add(k+1+s, 'days').weekday();
+            if(d1===6){
+                s = s+2;
+            }
+            let d4 = moment().add(k+1+s, 'days');
+            vectoMoment[k] = d4.format('MMM Do YY');
+        };
+    }
     async createRondas(): Promise<Rondas[]>{
         const foundEquipo = await this.equipoRepository.find();
         const foundRondas = await this.rondasRepository.find();
         const length = foundEquipo.length;
         const rondas = new Rondas();
+        let s = 0;
         let rondasDate = '';
         let vectoMoment = [];
-        let s = 0;
+        
         let dateFinal = moment(rondasDate, 'MMM Do YY').toDate();
         let dateActual = moment().add(0, 'days').toDate();
 
         if (!foundRondas[0] || dateFinal < dateActual){
-            for(let k = 0; k<foundEquipo.length; k++){
-                let d1 = moment().add(k+15+s, 'days').weekday();
-                if(d1===6){
-                    s = s+2;
-                }
-                let d4 = moment().add(k+15+s, 'days');
-                vectoMoment[k] = d4.format('MMM Do YY');
-            };
+            this.diaSiguiente(length, vectoMoment);
         } else{
             for(let k = 0; k<foundEquipo.length; k++){
                 let d1 = moment(foundRondas[foundRondas.length -1].fecha_final,'MMM Do YY').add(k+1+s, 'days').weekday();
@@ -52,8 +57,6 @@ export class RondasService {
         
         await this.rondasRepository.save(rondas);
         console.log(rondas.activa);
-        rondasDate = foundRondas[foundRondas.length-1].fecha_final;
-        console.log(rondasDate);
 
         if(vectoMoment[0]<vectoMoment[1]){
             console.log("Menor")
@@ -77,7 +80,7 @@ export class RondasService {
         for(let j = 0; j<foundRondas.length; j++){
             g=0;
             for(let i = 0; i<foundEquipo.length; i++){
-                let d1 = moment().add(34, 'days').format('MMM Do YY');
+                let d1 = moment().add(3, 'days').format('MMM Do YY');
                 let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
                 let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').format('MMM Do YY');
                 let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').format('MMM Do YY');
@@ -120,15 +123,20 @@ export class RondasService {
     }
 
         //Recortador de ronda activa
-        /*
+        
         async recrondas():Promise<Rondas>{
             let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
-            let rondaInicio = moment(ronda.fecha_inicio, 'MMM Do YY').toDate();
+            let rondaActual = moment().add(3, 'days').toDate();
             let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
 
             if (ronda) {
-                if (ronda.fecha_inicio.getDate() === (ronda.fecha_final.getDate()-1) ) {
-                    ronda.fecha_final.setDate(ronda.fecha_final.getDate()-1);
+                if (rondaActual < rondaFinal) {
+                    if ((rondaFinal.getDate()-1)!==0){
+                        rondaFinal.setDate(rondaFinal.getDate()-1);
+                    } else{
+                        rondaFinal.setDate(rondaFinal.getDate()-3);
+                    }
+                    ronda.fecha_final = moment(rondaFinal).format('MMM Do YY');
                     console.log('Fecha inicio '+ronda.fecha_inicio);
                     console.log('Fecha final '+ronda.fecha_final);
                     return await this.rondasRepository.save(ronda);
@@ -140,6 +148,6 @@ export class RondasService {
                 console.log('No hay rondas activas');
                 return null;
             }
-        }*/
+        }
     
 }
