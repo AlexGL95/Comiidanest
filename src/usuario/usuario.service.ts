@@ -74,7 +74,7 @@ export class UsuarioService {
         if(user) {
             return user;
         } else {
-            this.errorService.throwError("T-801"); 
+            this.sererr.throwError("T-801"); 
         } 
     }
 
@@ -83,7 +83,7 @@ export class UsuarioService {
         if( usuario) {
             return usuario;
         } else {
-            this.errorService.throwError("T-801");
+            this.sererr.throwError("T-801");
         } 
     }
 

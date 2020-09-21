@@ -14,8 +14,7 @@ import { Err } from 'src/error/error.entity';
 import { Usuarios } from './usuario.entity';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { Err } from 'src/error/error.entity';
-import { ErrorService } from 'src/error/error.service';
+
 
 @Module({
     imports: [
