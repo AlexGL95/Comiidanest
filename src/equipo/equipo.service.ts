@@ -8,6 +8,7 @@ import { Usuarios } from 'src/usuario/usuario.entity';
 import moment = require('moment');
 import { updateDateDto } from './dto/updateDate.dto';
 import { EquipoU } from './dto/equipos.dto';
+import { ErrorService } from 'src/error/error.service';
 
 @Injectable()
 export class EquiposService {
@@ -19,6 +20,7 @@ export class EquiposService {
         private usuariosRepository: Repository<Usuarios>,
         @InjectRepository(EquipoReceta)
         private equipos_recetasRepository: Repository<EquipoReceta>,
+        private errorService: ErrorService
     ) {}
 
     //Aqui pega tus apis con la entidad Equipo
@@ -190,10 +192,7 @@ export class EquiposService {
             return equiposArr;
 
         } else {
-            const err = new Error;
-            err.name = "T-804";
-            err.message = 'Ronda no encontrada.';
-            throw err;
+            this.errorService.throwError("T-804");
         }
     }
 
@@ -205,10 +204,7 @@ export class EquiposService {
             equipo.fecha = update.fechaNueva;
             return await this.equiposRepository.update(equipo.id, equipo);
         } else {
-            const err = new Error;
-            err.name = "T-803";
-            err.message = 'Equipo no encontrado.';
-            throw err;
+            this.errorService.throwError("T-803");
         }
     }
 }

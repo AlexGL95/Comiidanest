@@ -8,6 +8,7 @@ import { Rondas } from "../ronda/ronda.entity";
 import { EquiposService } from "../equipo/equipo.service";
 import { EquiposInterface } from "../equipo/interface/equipos.interface";
 import moment = require('moment');
+import { ErrorService } from 'src/error/error.service';
 
 @Injectable()
 export class UsuarioService {
@@ -16,7 +17,8 @@ export class UsuarioService {
         @InjectRepository(Usuarios)
         private userRepository: Repository<Usuarios>,
         private rondasService: RondasService,
-        private equipoService: EquiposService
+        private equipoService: EquiposService,
+        private errorService: ErrorService
     ) {} 
 
     //Recuperar todos los usuarios
@@ -78,10 +80,7 @@ export class UsuarioService {
         if(user) {
             return user;
         } else {
-            const err = new Error;
-            err.name = "T-801";
-            err.message = 'Usuario no encontrado';
-            throw err;
+            this.errorService.throwError("T-801"); 
         } 
     }
 
@@ -90,10 +89,7 @@ export class UsuarioService {
         if( usuario) {
             return usuario;
         } else {
-            const err = new Error;
-            err.name = "T-801";
-            err.message = 'Usuario no encontrado';
-            throw err;
+            this.errorService.throwError("T-801");
         } 
     }
 
