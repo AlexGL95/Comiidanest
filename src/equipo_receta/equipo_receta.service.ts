@@ -5,6 +5,7 @@ import { Equipo } from "../equipo/equipo.entity";
 import { Recetas } from "../receta/receta.entity";
 import { Repository } from 'typeorm';
 import { merge } from 'rxjs';
+import { ErrorService } from 'src/error/error.service';
 
 @Injectable()
 export class EquipoRecetaService {
@@ -15,7 +16,8 @@ export class EquipoRecetaService {
         @InjectRepository(Equipo)
         private equipoRepository: Repository<Equipo>,
         @InjectRepository(Recetas)
-        private RecetaRepository: Repository<Recetas>
+        private RecetaRepository: Repository<Recetas>,
+        private errorService: ErrorService
     ) {}
 
     //Metodo para crear un nuevo renglon en la base de datos
@@ -30,17 +32,11 @@ export class EquipoRecetaService {
                     let newRow = {equipo: equipoTemp, recetas: recetasTemp};   
                     await this.equipoRecetaRepository.save(newRow);
                 } else {
-                    const err = new Error;
-                    err.name = "T-802";
-                    err.message = 'Receta no encontrada.';
-                    throw err;
+                    this.errorService.throwError("T-802");
                 }
             }
         } else {
-            const err = new Error;
-            err.name = "T-803";
-            err.message = 'Equipo no encontrado.';
-            throw err;
+            this.errorService.throwError("T-803");
         }
     }
 
@@ -54,10 +50,7 @@ export class EquipoRecetaService {
                 await this.equipoRecetaRepository.delete(recetasDelEquipo[m].id);
             }
         } else {
-            const err = new Error;
-            err.name = "T-803";
-            err.message = 'Equipo no encontrado.';
-            throw err;
+            this.errorService.throwError("T-803");
         }
     }
 

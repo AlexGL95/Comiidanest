@@ -39,7 +39,8 @@ export class ErrorService {
                 {codigo:``,descripcion:"No hay usuarios suficientes"},
                 {codigo:``,descripcion:"Se elimino ronda activa"},
                 {codigo:``,descripcion:"Parametros insuficientes"},
-                {codigo:``,descripcion:"Base de datos no responde"}] ; //objeto de tipo error para poblar la tabla
+                {codigo:``,descripcion:"Base de datos no responde"},
+                {codigo:``,descripcion:"No hay ingredientes"},] ; //objeto de tipo error para poblar la tabla
             //arreglo de strings para las descripciones delos errores
             
             for (let i = 0; i < err.length; i++) {
