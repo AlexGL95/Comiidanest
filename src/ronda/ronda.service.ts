@@ -37,7 +37,7 @@ export class RondasService {
         let dateFinal = moment(rondasDate, 'MMM Do YY').toDate();
         let dateActual = moment().add(0, 'days').toDate();
 
-        if (!foundRondas[0] || (dateFinal < dateActual)){
+        if (!foundRondas[0] || dateFinal < dateActual){
             this.diaSiguiente(length, vectoMoment);
         } else{
             for(let k = 0; k<foundEquipo.length; k++){
@@ -77,23 +77,16 @@ export class RondasService {
                 let d1 = moment().add(1, 'days').toDate();
                 let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
                 let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').toDate();
-                let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').toDate();
+                let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').toDate();
                 if (d2===6 || d2 === 0){
                     i--;
                 };
-                if(d4 === d1){
-                    if(d3 >= d4){
-                        rondas.activa = true;
-                        i = foundEquipo.length;
-                    }else{
-                        rondas.activa = false;
-                        i = foundEquipo.length;
-                    }
+                if((d1>=d4) && (d1<=d3)){
+                    rondas.activa = true;
                 }else{
                     rondas.activa = false;
                 }
                 g++;
-                console.log(d1, d2, d3, d4);
             }
             foundRondas[j].activa = rondas.activa;
             
@@ -120,12 +113,12 @@ export class RondasService {
         
         async recrondas():Promise<Rondas>{
             let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
-            let rondaActual = moment().add(3, 'days').toDate();
+            let rondaActual = moment().add(1, 'days').toDate();
             let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
 
             if (ronda) {
                 if (rondaActual < rondaFinal) {
-                    if ((rondaFinal.getDate()-1)!==0){
+                    if ((rondaFinal.getDay()-1)!==0){
                         rondaFinal.setDate(rondaFinal.getDate()-1);
                     } else{
                         rondaFinal.setDate(rondaFinal.getDate()-3);
