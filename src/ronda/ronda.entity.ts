@@ -17,4 +17,8 @@ export class Rondas {
 
     @Generated()
     numero_ronda: number;
+
+    @Column()
+    hora_de_generacion: string;
+
 }
