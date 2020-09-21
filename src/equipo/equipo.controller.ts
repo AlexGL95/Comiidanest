@@ -41,16 +41,4 @@ export class EquiposController {
             } );
     }
 
-    //API updateDate.
-    @Put()
-    updateDate( @Res() response, @Body() newDate: updateDateDto ){
-        return this.equiposService.updateDate(newDate)
-            .then( receta => {
-                response.status(HttpStatus.OK).json(receta);
-            } )
-            .catch( err => {
-                response.status(HttpStatus.CONFLICT).json(err);
-            } );
-    }
-
 }

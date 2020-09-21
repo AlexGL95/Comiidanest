@@ -4,6 +4,7 @@ import { Equipo } from '../equipo/equipo.entity';
 import { Repository } from 'typeorm';
 import moment = require('moment');
 import { Rondas } from './ronda.entity';
+import { Usuarios } from 'src/usuario/usuario.entity';
 
 @Injectable()
 export class RondasService {
@@ -11,12 +12,15 @@ export class RondasService {
         @InjectRepository(Equipo)
         private equipoRepository: Repository<Equipo>,
         @InjectRepository(Rondas)
-        private rondasRepository: Repository<Rondas>
+        private rondasRepository: Repository<Rondas>,
+        @InjectRepository(Usuarios)
+        private usuariosRepository: Repository<Usuarios>
     ){}
 
-    diaSiguiente(length: number, vectoMoment: Array<String>){
+    //Metodo que guarda en un vector los dias de una ronda
+    async diaSiguiente(length: number, vectoMoment: Array<String>){
         let s = 0;
-        for(let k = 0; k<length; k++){
+        for(let k = 0; k<(Math.floor(length/2)); k++){
             let d1 = moment().add(k+1+s, 'days').weekday();
             if(d1===6){
                 s = s+2;
@@ -25,43 +29,64 @@ export class RondasService {
             vectoMoment[k] = d4.format('MMM Do YY');
         };
     }
-    async createRondas(): Promise<Rondas[]>{
-        const foundEquipo = await this.equipoRepository.find();
-        const foundRondas = await this.rondasRepository.find();
-        const length = foundEquipo.length;
-        const rondas = new Rondas();
-        let s = 0;
-        let rondasDate = '';
-        let vectoMoment = [];
-        
-        let dateFinal = moment(rondasDate, 'MMM Do YY').toDate();
-        let dateActual = moment().add(0, 'days').toDate();
 
-        if (!foundRondas[0] || dateFinal < dateActual){
-            this.diaSiguiente(length, vectoMoment);
+    //Metodo para crear una ronda nueva
+    async createRondas(): Promise<Rondas[]>{
+        const usuariosArr: Usuarios[] = await this.usuariosRepository.find();
+        const foundRondas: Rondas[] = await this.rondasRepository.find();
+        const length = usuariosArr.length;
+        const rondas = new Rondas();
+        let s = 0; //Variable para control de fin de semana
+        let rondasDate;
+        let vectoMoment = []; //Guarda la fecha de inicio y final de la ronda
+
+        //Condicion.
+        //Si existe una ronda = llama el ultimo dato, si no, guarda hoy
+        if (foundRondas.length > 0) {
+            rondasDate = foundRondas[foundRondas.length-1].fecha_final;
+        } else {
+            rondasDate = '';
+        }
+
+        //Variables de comparacion, ultima fecha de la tabla y fecha actual
+        let dateFinal = moment(rondasDate, 'MMM Do YY').toDate();
+        let dateActual = moment().toDate();
+
+        //Si no hay rondas guardas o solo hay rondas obsoletas = genera una ronda el dia siguidente
+        if ( (foundRondas.length === 0) || (dateFinal < dateActual) ){
+            //Hora de apertura de la ronda
+            rondas.hora_de_generacion = dateActual.getHours().toString() ;
+            //Verificacion de si la ronda tiene un fin de semana intrinseco
+            await this.diaSiguiente(length, vectoMoment);
+        //Si hay rondas futuras = Crea una ronda a partir de la siguiente fecha habil de la ultima ronda
         } else{
-            for(let k = 0; k<foundEquipo.length; k++){
-                let d1 = moment(foundRondas[foundRondas.length -1].fecha_final,'MMM Do YY').add(k+1+s, 'days').weekday();
+            //Hora de apertura de la ronda
+            rondas.hora_de_generacion = "16";
+            //Verificacion de si la ronda tiene un fin de semana intrinseco
+            for(let k = 0; k<(Math.floor(usuariosArr.length/2)); k++){
+                /*
+                d1= Dia que se comprueba si es fin de semana
+                d4= Lo mismo pero con otro formato
+                */
+
+                let d1 = moment(foundRondas[foundRondas.length-1].fecha_final,'MMM Do YY').add(k+1+s, 'days').weekday();
+                //Condicional. Si el dia siguiente es sabado, incrementa el offset de finde en 2
                 if(d1===6){
                     s = s+2;
                 }
                 let d4 = moment(foundRondas[foundRondas.length -1].fecha_final, 'MMM Do YY').add(k+1+s, 'days');
                 vectoMoment[k] = d4.format('MMM Do YY');
             };
-
         }
 
+        //Confuguracion de la nueva ronda
         rondas.fecha_inicio = vectoMoment[0];
         rondas.fecha_final = vectoMoment[vectoMoment.length-1];
         rondas.activa = false;
-        
         await this.rondasRepository.save(rondas);
-        console.log(rondas.activa);
-            
+        
+        //Objeto de comprobacion
         const foundRondasActual = await this.rondasRepository.find();
-        rondasDate = foundRondasActual[foundRondasActual.length-1].fecha_final;
-        console.log(rondasDate);
-
         return foundRondasActual;
     }
 
@@ -109,8 +134,7 @@ export class RondasService {
         return foundRondas;
     }
 
-        //Recortador de ronda activa
-        
+        //Metodo recortador de ronda activa
         async recrondas():Promise<Rondas>{
             let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
             let rondaActual = moment().add(1, 'days').toDate();
@@ -124,17 +148,46 @@ export class RondasService {
                         rondaFinal.setDate(rondaFinal.getDate()-3);
                     }
                     ronda.fecha_final = moment(rondaFinal).format('MMM Do YY');
-                    console.log('Fecha inicio '+ronda.fecha_inicio);
-                    console.log('Fecha final '+ronda.fecha_final);
                     return await this.rondasRepository.save(ronda);
                 } else {
-                    console.log('Es hoy');
                     return null;     
                 }
             } else {
-                console.log('No hay rondas activas');
                 return null;
             }
         }
     
+
+    async recalcularRondas() {
+        //1.-Obten las rondas existentes
+        let rondas: Rondas[];
+        try {
+            rondas = await this.getRondas();
+        } catch (err) {
+            throw err;
+        }
+
+        //2.-Busca las rondas que su fecha de inicio sea mayor a la fecha actual
+        let fechaActual = new Date();
+        let rondasAEliminar: Rondas[] = []
+        rondas.forEach( ronda => {
+            let inicioDeRonda = moment(ronda.fecha_inicio, 'MMM Do YY').toDate();
+            if( (inicioDeRonda >= fechaActual) ) {
+                rondasAEliminar.push(ronda);
+            }
+        });
+
+        //3.-Cuentalas
+        const RONDAS_FUTURAS = rondasAEliminar.length;
+
+        //4.-Borra las rondas que coincidan de la base de datos
+        for (let m = 0; m < rondasAEliminar.length; m++) {
+            await this.rondasRepository.delete(rondasAEliminar[m].id);
+        }
+
+        //5.-Crea el mismo numero de rondas
+        for (let m = 0; m < rondasAEliminar.length; m++) {
+            await this.createRondas();
+        }
+    }
 }

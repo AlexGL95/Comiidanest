@@ -1,10 +1,10 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Entity, PrimaryColumn, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Err {
 
-    @PrimaryColumn()
-    id:string;
+    @PrimaryGeneratedColumn()
+    id:number;
 
     @Column()
     codigo: string;
