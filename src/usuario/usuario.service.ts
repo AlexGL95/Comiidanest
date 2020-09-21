@@ -179,9 +179,18 @@ export class UsuarioService {
                 }
 
                 //12.-Llama la funcion recortar ronda.
-
+                try {
+                    await this.rondasService.recrondas();
+                } catch (err) {
+                    throw err;
+                }
 
                 //13.-Llama recalcularRondas.
+                try {
+                    await this.rondasService.recalcularRondas();
+                } catch (err) {
+                    throw err;
+                }
 
             }
         }
