@@ -4,17 +4,26 @@ import { EquiposService } from './equipo.service';
 import { updateDateDto } from './dto/updateDate.dto';
 import { Usuarios } from 'src/usuario/usuario.entity';
 import { Equipo } from './equipo.entity';
+import { response } from 'express';
 
 @Controller('equipos')
 export class EquiposController {
 
     constructor(private equiposService: EquiposService) {}
 
+    // API getTeams
     @Get('/random')
-    getTeams(): Promise<Usuarios[]>{
-        return this.equiposService.getTeams();
+    getTeams(@Res() response){
+        return this.equiposService.getTeams()
+            .then( teams => {
+                response.status(HttpStatus.OK).json(teams);
+            } )
+            .catch( err => {
+                response.status(HttpStatus.CONFLICT).json(err);
+            } );
     }
 
+    // API deleteTeam
     @Delete()
     deleteTeam(): Promise<Equipo> {
         return this.equiposService.deleteTeam();
@@ -26,18 +35,6 @@ export class EquiposController {
         return this.equiposService.getAll()
             .then( equiposArr => {
                 response.status(HttpStatus.OK).json(equiposArr);
-            } )
-            .catch( err => {
-                response.status(HttpStatus.CONFLICT).json(err);
-            } );
-    }
-
-    //API updateDate.
-    @Put()
-    updateDate( @Res() response, @Body() newDate: updateDateDto ){
-        return this.equiposService.updateDate(newDate)
-            .then( receta => {
-                response.status(HttpStatus.OK).json(receta);
             } )
             .catch( err => {
                 response.status(HttpStatus.CONFLICT).json(err);

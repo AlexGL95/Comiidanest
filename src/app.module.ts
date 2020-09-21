@@ -19,7 +19,7 @@ import { ErrorModule } from './error/error.module';
       port: 3306,
       username: 'root',
       password: '',
-      database: 'comiidav4',
+      database: 'comiidav2',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,

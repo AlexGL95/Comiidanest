@@ -59,8 +59,8 @@ export class RecetasController {
     @Delete('/:id')
     deleteById( @Param('id') id: number, @Res() response  ) {
         this.recetasService.deleteReceta(id)
-            .then( recetaDeleted => {
-                response.status(HttpStatus.OK).json(recetaDeleted);
+            .then( () => {
+                response.status(HttpStatus.OK).json( {Mensaje: `Recipe ${id} deleted` } );
             } )
             .catch( err => {
                 response.status(HttpStatus.CONFLICT).json(err);
@@ -71,8 +71,8 @@ export class RecetasController {
     @Put('/change/:id')
     changeStateById( @Param('id') id: number, @Res() response ) {
         this.recetasService.changeStateById(id)
-            .then( recetaModified => {
-                response.status(HttpStatus.OK).json(recetaModified);
+            .then( () => {
+                response.status(HttpStatus.OK).json( { Mensaje: `Changed status` } );
                 } )
             .catch( err => {
                 response.status(HttpStatus.CONFLICT).json(err);

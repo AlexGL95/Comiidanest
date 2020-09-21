@@ -2,14 +2,12 @@ import { Controller, Get, Post, Body, Put, Delete, Res, HttpStatus, Param, Valid
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUsuariodto } from './dto/create_usuario.dto';
 import { UsuarioService } from './usuario.service';
-import { RondasService } from '../ronda/ronda.service';
 
 @Controller('usuarios')
 export class UsuarioController {
     
     constructor(
-        private usuariosservice: UsuarioService,
-        private rondasService: RondasService,
+        private usuariosservice: UsuarioService
     ) {}
 
     @Post()
@@ -44,15 +42,6 @@ export class UsuarioController {
     delete( @Param('id') id, @Res() response ) {
         this.usuariosservice.deleteUsuario( id )
             .then( () => {
-                //1.-Verifica si hay una ronda activa.
-                let rondasArr = this.rondasService.getRondas();
-                console.log(rondasArr);
-                    //2.-Si no, elimina el usuario.
-                    //3.-Si si, busca si el usuario pertenece a un equipo activo.
-                        //4.-Si no, elimina el usuario.
-                        //5.-Si si, busca el ultimo equipo de la ronda.
-                        //6.-Cambia las fechas del equipo al que pertenece el usuario y la del ultimo equipo.
-                        //7.-Llama la funcion recortar ronda.
                 response.status(HttpStatus.OK).json( {Mensaje:`User ${id} eliminated.`} );
             } )
             .catch( err =>{

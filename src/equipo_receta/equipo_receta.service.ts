@@ -4,6 +4,7 @@ import { EquipoReceta } from "./equipo_receta.entity";
 import { Equipo } from "../equipo/equipo.entity";
 import { Recetas } from "../receta/receta.entity";
 import { Repository } from 'typeorm';
+import { merge } from 'rxjs';
 
 @Injectable()
 export class EquipoRecetaService {
@@ -57,6 +58,20 @@ export class EquipoRecetaService {
             err.name = "T-803";
             err.message = 'Equipo no encontrado.';
             throw err;
+        }
+    }
+
+    //Metodo para asignar recetas a un equipo enviado
+    async assignRecipe( idEquipo: number, idRecetas: number[] ) {
+        try {
+            await this.deleteRow( idEquipo );    
+        } catch (err) {
+            throw err;
+        }
+        try {
+            await this.createRow( idEquipo, idRecetas );    
+        } catch (err) {
+            throw err;   
         }
     }
 }
