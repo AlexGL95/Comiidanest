@@ -1,14 +1,18 @@
-import { Controller, Get, Post, Delete, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, ParseIntPipe, Res, HttpStatus } from '@nestjs/common';
 import { RondasService } from './ronda.service';
 import { Rondas } from './ronda.entity';
+import { response } from 'express';
 
 @Controller('rondas')
 export class RondasController {
     constructor(private rondasService: RondasService){}
 
     @Post()
-    createRondas(): Promise<Rondas[]>{
-        return this.rondasService.createRondas();
+    createRondas(@Res() response){
+        return this.rondasService.createRondas().then(rondas => {
+            response.status(HttpStatus.CREATED).json(rondas)
+        }).catch(()=>{
+            response.status(HttpStatus.CONFLICT).json({usuariom:"Error en la creacion de la ronda"});})
     }
 
     @Get()

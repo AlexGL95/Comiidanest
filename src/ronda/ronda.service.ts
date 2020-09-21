@@ -99,26 +99,19 @@ export class RondasService {
         for(let j = 0; j<foundRondas.length; j++){
             g=0;
             for(let i = 0; i<foundEquipo.length; i++){
-                let d1 = moment().add(3, 'days').format('MMM Do YY');
+                let d1 = moment().add(1, 'days').toDate();
                 let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
-                let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').format('MMM Do YY');
-                let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').format('MMM Do YY');
+                let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').toDate();
+                let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').toDate();
                 if (d2===6 || d2 === 0){
                     i--;
                 };
-                if(d4.indexOf(d1)===0){
-                    if(d3.indexOf(d4)!==0){
-                        rondas.activa = true;
-                        i = foundEquipo.length;
-
-                    }else{
-                        rondas.activa = false;
-                        i = foundEquipo.length;
-                    }
+                if((d1>=d4) && (d1<=d3)){
+                    rondas.activa = true;
                 }else{
                     rondas.activa = false;
                 }
-                g++
+                g++;
             }
             foundRondas[j].activa = rondas.activa;
             
@@ -149,7 +142,7 @@ export class RondasService {
 
             if (ronda) {
                 if (rondaActual < rondaFinal) {
-                    if ((rondaFinal.getDate()-1)!==0){
+                    if ((rondaFinal.getDay()-1)!==0){
                         rondaFinal.setDate(rondaFinal.getDate()-1);
                     } else{
                         rondaFinal.setDate(rondaFinal.getDate()-3);

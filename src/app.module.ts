@@ -18,7 +18,7 @@ import { ErrorModule } from './error/error.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: '',
+      password: 'Konjikinogashbell25()',
       database: 'comiidav2',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
