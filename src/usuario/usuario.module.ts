@@ -12,10 +12,12 @@ import { RondasService } from '../ronda/ronda.service';
 import { EquiposService } from '../equipo/equipo.service';
 import { PassportModule} from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt';
+import { Err } from 'src/error/error.entity';
+import { ErrorService } from 'src/error/error.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Usuarios, Rondas, Equipo, EquipoReceta]),
+        TypeOrmModule.forFeature([Usuarios, Rondas, Equipo, EquipoReceta, Err]),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
             secret:'CadenaIndecifrable',
@@ -31,7 +33,7 @@ import { JwtModule } from '@nestjs/jwt';
         }),
     ],
     controllers: [UsuarioController, AuthController],
-    providers: [UsuarioService, JwtStrategy, RondasService, EquiposService],
+    providers: [UsuarioService, JwtStrategy, RondasService, EquiposService, ErrorService],
     exports:[JwtStrategy, PassportModule]
 })
 export class UsuarioModule {}
