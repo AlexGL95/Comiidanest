@@ -92,7 +92,6 @@ export class RondasService {
         const foundEquipo = await this.equipoRepository.find();
         const foundRondas = await this.rondasRepository.find();
         const rondas = new Rondas();
-        const array = [];
         let g = 0;
 
         for(let j = 0; j<foundRondas.length; j++){
