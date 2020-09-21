@@ -74,10 +74,7 @@ export class UsuarioService {
         if(user) {
             return user;
         } else {
-            const err = new Error;
-            err.name = "T-801";
-            err.message = 'Usuario no encontrado';
-            throw err;
+            this.sererr.throwError("T-801"); 
         } 
     }
 
@@ -86,10 +83,7 @@ export class UsuarioService {
         if( usuario) {
             return usuario;
         } else {
-            const err = new Error;
-            err.name = "T-801";
-            err.message = 'Usuario no encontrado';
-            throw err;
+            this.sererr.throwError("T-801");
         } 
     }
 

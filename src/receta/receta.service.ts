@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Recetas } from './receta.entity';
 import { insertRecetas } from './dto/insert_receta.dto';
+import { ErrorService } from 'src/error/error.service';
 
 @Injectable()
 export class RecetasService {
@@ -11,6 +12,7 @@ export class RecetasService {
     constructor(
         @InjectRepository(Recetas)
         private recetasRepository: Repository<Recetas>,
+        private errorService: ErrorService
     ) {}
 
     //Metodo para buscar todas las recetas.
@@ -25,10 +27,7 @@ export class RecetasService {
         if(receta) {
             return receta;
         } else {
-            const err = new Error;
-            err.name = "T-802";
-            err.message = 'Receta no encontrada.';
-            throw err;
+            this.errorService.throwError("T-802");
         }
     }
 
@@ -39,10 +38,7 @@ export class RecetasService {
         if(receta) {
             return receta;
         } else {
-            const err = new Error;
-            err.name = "T-802";
-            err.message = 'Receta no encontrada.';
-            throw err;
+            this.errorService.throwError("T-802");
         }
     }
 
@@ -51,10 +47,7 @@ export class RecetasService {
         const recetasArr = await this.recetasRepository.findOne({ where: { nombre: `${newReceta.nombre}` } });
         //Si existe, se retorna un error, si no, se guarda en la base de datos.
         if (recetasArr) {
-            const err = new Error;
-            err.name = "T-806";
-            err.message = 'Receta duplicada.';
-            throw err;
+            this.errorService.throwError("T-806");
         } else {
             return await this.recetasRepository.save(newReceta);
         }
@@ -67,10 +60,7 @@ export class RecetasService {
         if (receta) {
             return await this.recetasRepository.delete(id);
         } else {
-            const err = new Error;
-            err.name = "T-802";
-            err.message = 'Receta no encontrada.';
-            throw err;
+            this.errorService.throwError("T-802");
         }
     }
 
@@ -82,10 +72,7 @@ export class RecetasService {
             receta.activo = !receta.activo;
             return await this.recetasRepository.update(receta.id,receta);
         } else {
-            const err = new Error;
-            err.name = "T-802";
-            err.message = 'Receta no encontrada.';
-            throw err;
+            this.errorService.throwError("T-802");
         }
     }
 
@@ -107,10 +94,7 @@ export class RecetasService {
             } );
             return ingredientes;
         } else {
-            const err = new Error;
-            err.name = "T-816";
-            err.message = 'No hay recetas activas.';
-            throw err;
+            this.errorService.throwError("T-815");
         } 
     }
 }
