@@ -17,9 +17,10 @@ export class RondasService {
         private usuariosRepository: Repository<Usuarios>
     ){}
 
+    //Metodo que guarda en un vector los dias de una ronda
     async diaSiguiente(length: number, vectoMoment: Array<String>){
         let s = 0;
-        for(let k = 0; k<length; k++){
+        for(let k = 0; k<(Math.floor(length/2)); k++){
             let d1 = moment().add(k+1+s, 'days').weekday();
             if(d1===6){
                 s = s+2;
@@ -50,18 +51,14 @@ export class RondasService {
         //Variables de comparacion, ultima fecha de la tabla y fecha actual
         let dateFinal = moment(rondasDate, 'MMM Do YY').toDate();
         let dateActual = moment().toDate();
-        console.log('fecha actual = ' + dateActual); //!!BORRAR
-        console.log( 'ultima fecha de la tabla = ' + dateFinal); //!!BORRAR
 
         //Si no hay rondas guardas o solo hay rondas obsoletas = genera una ronda el dia siguidente
         if ( (foundRondas.length === 0) || (dateFinal < dateActual) ){
-            console.log('Paso por el if'); //!!BORRAR
             await this.diaSiguiente(length, vectoMoment);
         //Si hay rondas futuras = Crea una ronda a partir de la siguiente fecha habil de la ultima ronda
         } else{
-            console.log('Paso por el else'); //!!BORRAR
             //Verificacion de si la ronda tiene un fin de semana intrinseco
-            for(let k = 0; k<(usuariosArr.length/2); k++){
+            for(let k = 0; k<(Math.floor(usuariosArr.length/2)); k++){
                 /*
                 d1= Dia que se comprueba si es fin de semana
                 d4= Lo mismo pero con otro formato
@@ -138,11 +135,10 @@ export class RondasService {
         return foundRondas;
     }
 
-        //Recortador de ronda activa
-        
+        //Metodo recortador de ronda activa
         async recrondas():Promise<Rondas>{
             let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
-            let rondaActual = moment().add(3, 'days').toDate();
+            let rondaActual = moment().add(1, 'days').toDate();
             let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
 
             if (ronda) {
@@ -172,7 +168,6 @@ export class RondasService {
             throw err;
         }
 
-
         //2.-Busca las rondas que su fecha de inicio sea mayor a la fecha actual
         let fechaActual = new Date();
         let rondasAEliminar: Rondas[] = []
@@ -185,7 +180,6 @@ export class RondasService {
 
         //3.-Cuentalas
         const RONDAS_FUTURAS = rondasAEliminar.length;
-        console.log('Fechas futuras = '+ RONDAS_FUTURAS);
 
         //4.-Borra las rondas que coincidan de la base de datos
         for (let m = 0; m < rondasAEliminar.length; m++) {
