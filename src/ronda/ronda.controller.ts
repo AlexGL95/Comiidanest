@@ -29,8 +29,10 @@ export class RondasController {
     testi(): Promise<Rondas>{
         return this.rondasService.recrondas();
     }
+
+    @Get('/eliminarEstaApi')
     eliminarEstaApi() {
         return this.rondasService.recalcularRondas();
     }
-    @Get('/eliminarEstaApi')
+
 }
