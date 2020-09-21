@@ -17,7 +17,7 @@ export class UsuarioService {
         @InjectRepository(Usuarios)
         private userRepository: Repository<Usuarios>,
         private rondasService: RondasService,
-        private equipoService: EquiposService
+        private equipoService: EquiposService,
         private sererr: ErrorService, //Servicio de errores 
     ){} 
 
