@@ -148,31 +148,5 @@ export class RondasService {
     */
 
     //Activar Rondas
-    async activateRondas(){
-        const Rondas = await this.rondasRepository.find();
-        let now = moment().parseZone().format('MMM Do YY');
-        console.log(now);
-        if (Rondas.length>0) {
-            for (let i = 0; i < Rondas.length; i++) {
-                const element = Rondas[i].fecha_inicio;
-                console.log(element);
-                if (element == now) {
-                    console.log('Este si');
-                    const activ = await this.rondasRepository.findOne({ where: { activa: `1` } });
-                    if(activ){
-                        console.log(activ);
-                        activ.activa=false;
-                        await this.rondasRepository.save(activ);
-                    }
-                    Rondas[i].activa=true;
-                    await this.rondasRepository.save(Rondas[i]);
-                } else {
-                    console.log('Este no');
-                }
-            }
-        } else {
-            console.log('No hay rondas nada por hacer');
-        }
-    }
 
 }

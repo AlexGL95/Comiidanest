@@ -11,12 +11,14 @@ import { EquipoReceta } from 'src/equipo_receta/equipo_receta.entity';
 import { Recetas } from '../receta/receta.entity';
 import { RecetasService } from '../receta/receta.service';
 import { CronjobService } from './cronjob.service';
+import { ErrorService } from '../error/error.service';
+import { Err } from 'src/error/error.entity';
 
 @Module({
     imports:[
-        TypeOrmModule.forFeature([Rondas,Equipo,Usuarios,EquipoReceta,Recetas])
+        TypeOrmModule.forFeature([Rondas,Equipo,Usuarios,EquipoReceta,Recetas,Err])
     ],
     controllers:[],
-    providers:[RondasService,EquiposService,UsuarioService,EquipoRecetaService,RecetasService,CronjobService],
+    providers:[RondasService,EquiposService,UsuarioService,EquipoRecetaService,RecetasService,CronjobService,ErrorService],
 })
 export class CronjobModule {}
