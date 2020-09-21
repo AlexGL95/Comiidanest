@@ -8,7 +8,7 @@ import { Rondas } from "../ronda/ronda.entity";
 import { EquiposService } from "../equipo/equipo.service";
 import { EquiposInterface } from "../equipo/interface/equipos.interface";
 import moment = require('moment');
-import { ErrorService } from 'src/error/error.service';
+import { ErrorService } from '../error/error.service';
 
 @Injectable()
 export class UsuarioService {
@@ -18,8 +18,8 @@ export class UsuarioService {
         private userRepository: Repository<Usuarios>,
         private rondasService: RondasService,
         private equipoService: EquiposService,
-        private errorService: ErrorService
-    ) {} 
+        private sererr: ErrorService, //Servicio de errores 
+    ){} 
 
     //Recuperar todos los usuarios
     
@@ -35,10 +35,7 @@ export class UsuarioService {
             const Users = await this.userRepository.findOne({ where: { nombre: `${newuser.nombre}` } });
             //se puede configurar la columna como unique y atrapar el error de base de datos para evitar consulta doble
             if (Users) {
-                const err = new Error;
-                err.name = "T-805";
-                err.message = 'Usuario Duplicado';
-                throw err;
+                this.sererr.throwError('T-805');
             } else {
                 nuevo.id=0;
                 nuevo.nombre=newuser.nombre;
@@ -59,12 +56,9 @@ export class UsuarioService {
     async updateUsuario(idUsuario:number, usuarioActualizar: CreateUsuariodto):Promise<Usuarios>{
         const usuarioupdate = await this.userRepository.findOne(idUsuario);
         const Users = await this.userRepository.find({ where: { nombre: `${usuarioActualizar.nombre}` } });
-        if (Users.length > 1) {
-            const err = new Error;
-            err.name = "T-805";
-            err.message = 'Usuario Duplicado';
-            throw err;
-        } else {
+        if (Users.length > 1) {//comprueba que no haya mas de 1 usuario con el mismo nombre
+            this.sererr.throwError('T-805');
+        } else {//actualiza datos del usuario
             usuarioupdate.nombre=usuarioActualizar.nombre;
             usuarioupdate.equipo=usuarioActualizar.equipoid;
             const bcrypt = require ("bcrypt");
