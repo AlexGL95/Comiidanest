@@ -13,65 +13,74 @@ export class RondasService {
         @InjectRepository(Rondas)
         private rondasRepository: Repository<Rondas>
     ){}
-    
+
+    diaSiguiente(length: number, vectoMoment: Array<String>){
+        let s = 0;
+        for(let k = 0; k<length; k++){
+            let d1 = moment().add(k+1+s, 'days').weekday();
+            if(d1===6){
+                s = s+2;
+            }
+            let d4 = moment().add(k+1+s, 'days');
+            vectoMoment[k] = d4.format('MMM Do YY');
+        };
+    }
     async createRondas(): Promise<Rondas[]>{
         const foundEquipo = await this.equipoRepository.find();
         const foundRondas = await this.rondasRepository.find();
         const length = foundEquipo.length;
         const rondas = new Rondas();
-        let vectoDate = [];
-
         let s = 0;
-        if(!foundRondas[0]){
+        let rondasDate = '';
+        let vectoMoment = [];
+        
+        let dateFinal = moment(rondasDate, 'MMM Do YY').toDate();
+        let dateActual = moment().add(0, 'days').toDate();
+
+        if (!foundRondas[0] || dateFinal < dateActual){
+            this.diaSiguiente(length, vectoMoment);
+        } else{
             for(let k = 0; k<foundEquipo.length; k++){
-                let d1 = moment().add(k+1+s, 'days').weekday();
+                let d1 = moment(foundRondas[foundRondas.length -1].fecha_final,'MMM Do YY').add(k+1+s, 'days').weekday();
                 if(d1===6){
                     s = s+2;
                 }
-                let d4 = moment().add(k+1+s, 'days').toDate();
-                vectoDate[k] = d4;
-            }
-            console.log(vectoDate);
-            console.log()
+                let d4 = moment(foundRondas[foundRondas.length -1].fecha_final, 'MMM Do YY').add(k+1+s, 'days');
+                vectoMoment[k] = d4.format('MMM Do YY');
+            };
+
         }
+
+        rondas.fecha_inicio = vectoMoment[0];
+        rondas.fecha_final = vectoMoment[vectoMoment.length-1];
+        rondas.activa = false;
         
-        
-        //rondas.fecha_inicio = foundEquipo[0].fecha;
-        //rondas.fecha_final = foundEquipo[length-1].fecha;
-        //rondas.activa = false;
-        
-        //await this.rondasRepository.save(rondas);
-        //console.log(rondas.activa);
-        return foundRondas;
+        await this.rondasRepository.save(rondas);
+        console.log(rondas.activa);
+
+        if(vectoMoment[0]<vectoMoment[1]){
+            console.log("Menor")
+        };
+        console.log(vectoMoment);
+            
+        const foundRondasActual = await this.rondasRepository.find();
+        rondasDate = foundRondasActual[foundRondasActual.length-1].fecha_final;
+        console.log(rondasDate);
+
+        return foundRondasActual;
     }
 
     async temporalRondas(): Promise<Rondas[]>{
         const foundEquipo = await this.equipoRepository.find();
         const foundRondas = await this.rondasRepository.find();
-        const length = foundEquipo.length;
-        const length2 = foundRondas.length;
         const rondas = new Rondas();
         const array = [];
         let g = 0;
-        let d1 = moment(foundEquipo[length-1].fecha, 'MMM Do YY').fromNow();
-        
-
-        //for(let i = 0; i<foundEquipo.length; i++){
-          //  array[i] = foundEquipo[i].fecha
-           // if(d2===array[i]){
-             //   rondas.activa = true;
-               // i = foundEquipo.length;
-            //}else if(i<foundEquipo.length-1){
-              //  rondas.activa = true;
-            //}else{
-              //  rondas.activa = false;
-           // }
-        //}
 
         for(let j = 0; j<foundRondas.length; j++){
             g=0;
             for(let i = 0; i<foundEquipo.length; i++){
-                let d1 = moment().add(34, 'days').format('MMM Do YY');
+                let d1 = moment().add(3, 'days').format('MMM Do YY');
                 let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
                 let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').format('MMM Do YY');
                 let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').format('MMM Do YY');
@@ -89,16 +98,17 @@ export class RondasService {
                 }else{
                     rondas.activa = false;
                 }
-                
                 g++
             }
             foundRondas[j].activa = rondas.activa;
+            
             await this.rondasRepository.save(foundRondas[j]);
         }
-        return foundRondas;
+        const foundRondasActual = await this.rondasRepository.find();
+        return foundRondasActual;
     }
 
-    async getRondas(): Promise<Rondas[]> {
+    async getRondas(): Promise<Rondas[]>{
         return await this.rondasRepository.find();
     }
 
@@ -110,6 +120,35 @@ export class RondasService {
         const foundRondas= await this.rondasRepository.find();
         return foundRondas;
     }
+
+        //Recortador de ronda activa
+        
+        async recrondas():Promise<Rondas>{
+            let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
+            let rondaActual = moment().add(3, 'days').toDate();
+            let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
+
+            if (ronda) {
+                if (rondaActual < rondaFinal) {
+                    if ((rondaFinal.getDate()-1)!==0){
+                        rondaFinal.setDate(rondaFinal.getDate()-1);
+                    } else{
+                        rondaFinal.setDate(rondaFinal.getDate()-3);
+                    }
+                    ronda.fecha_final = moment(rondaFinal).format('MMM Do YY');
+                    console.log('Fecha inicio '+ronda.fecha_inicio);
+                    console.log('Fecha final '+ronda.fecha_final);
+                    return await this.rondasRepository.save(ronda);
+                } else {
+                    console.log('Es hoy');
+                    return null;     
+                }
+            } else {
+                console.log('No hay rondas activas');
+                return null;
+            }
+        }
+    
 
     async recalcularRondas() {
         //1.-Obten las rondas existentes
