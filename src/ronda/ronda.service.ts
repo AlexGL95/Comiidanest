@@ -1,8 +1,10 @@
+//Modules
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equipo } from '../equipo/equipo.entity';
 import { Repository } from 'typeorm';
 import moment = require('moment');
+//Entities
+import { Equipo } from '../equipo/equipo.entity';
 import { Rondas } from './ronda.entity';
 import { Usuarios } from 'src/usuario/usuario.entity';
 
@@ -91,14 +93,14 @@ export class RondasService {
     }
 
     async temporalRondas(): Promise<Rondas[]>{
-        const foundEquipo = await this.equipoRepository.find();
+        const usuariosArr: Usuarios[] = await this.usuariosRepository.find();
         const foundRondas = await this.rondasRepository.find();
         const rondas = new Rondas();
         let g = 0;
 
         for(let j = 0; j<foundRondas.length; j++){
             g=0;
-            for(let i = 0; i<foundEquipo.length; i++){
+            for(let i = 0; i<(Math.floor(usuariosArr.length/2)); i++){
                 let d1 = moment().add(1, 'days').toDate();
                 let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
                 let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').toDate();
@@ -108,6 +110,7 @@ export class RondasService {
                 };
                 if((d1>=d4) && (d1<=d3)){
                     rondas.activa = true;
+                    
                 }else{
                     rondas.activa = false;
                 }
@@ -157,7 +160,7 @@ export class RondasService {
             }
         }
     
-
+    //Metodo para recalcular todas las rondas futuras
     async recalcularRondas() {
         //1.-Obten las rondas existentes
         let rondas: Rondas[];

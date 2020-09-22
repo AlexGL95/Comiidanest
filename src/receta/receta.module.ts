@@ -1,9 +1,13 @@
+//Modules
 import { Module } from '@nestjs/common';
-import { RecetasController } from './receta.controller';
-import { RecetasService } from './receta.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Recetas } from './receta.entity';
+//Services
+import { RecetasService } from './receta.service';
 import { ErrorService } from 'src/error/error.service';
+//Controllers
+import { RecetasController } from './receta.controller';
+//Entities
+import { Recetas } from './receta.entity';
 import { Err } from 'src/error/error.entity';
 
 @Module({

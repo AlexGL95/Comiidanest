@@ -1,14 +1,18 @@
+//Modulos
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import moment = require('moment');
+//Services
+import { ErrorService } from 'src/error/error.service';
+//Entitys
 import { EquipoReceta } from '../equipo_receta/equipo_receta.entity';
 import { Equipo } from './equipo.entity';
-import { Repository } from 'typeorm';
-import { EquiposInterface } from './interface/equipos.interface';
 import { Usuarios } from 'src/usuario/usuario.entity';
-import moment = require('moment');
+//Interfaces
+import { EquiposInterface } from './interface/equipos.interface';
 import { updateDateDto } from './dto/updateDate.dto';
 import { EquipoU } from './dto/equipos.dto';
-import { ErrorService } from 'src/error/error.service';
 
 @Injectable()
 export class EquiposService {
@@ -23,7 +27,6 @@ export class EquiposService {
         private errorService: ErrorService
     ) {}
 
-    //Aqui pega tus apis con la entidad Equipo
     async getTeams(): Promise<Usuarios[]> {
         // Obtener arreglos con informacion de las bases de datos -->
         const found = await this.usuariosRepository.find({relations:["equipo"]});
@@ -111,7 +114,6 @@ export class EquiposService {
     //eliminar equipo
     async deleteTeam(): Promise<Equipo> {
         const result = await this.equiposRepository.find();
-        console.log(result);
         if (result) {
             let eaux =result[result.length-1];            //variable auxiliar para retornar el equipo eliminado y encontrar el ultimo equipo de la tabla
             this.equiposRepository.delete(eaux.id);    //elimina el equipo con el id
@@ -125,7 +127,6 @@ export class EquiposService {
     async addteam():Promise<Equipo>{
         let base = new Equipo;
         base.fecha =  moment('Sep 22nd 01', 'MMM Do YY').format('MMM Do YY');
-        console.log(base);
        return await this.equiposRepository.save(base);
     }
 

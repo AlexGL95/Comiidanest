@@ -1,4 +1,6 @@
+//Modulos
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity } from "typeorm";
+//Entitys
 import { Usuarios } from '../usuario/usuario.entity';
 import { EquipoReceta } from '../equipo_receta/equipo_receta.entity';
 

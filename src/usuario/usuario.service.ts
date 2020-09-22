@@ -1,14 +1,18 @@
+//Modules
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUsuariodto } from './dto/create_usuario.dto';
-import { Usuarios } from './usuario.entity';
-import { RondasService } from "../ronda/ronda.service";
-import { Rondas } from "../ronda/ronda.entity";
-import { EquiposService } from "../equipo/equipo.service";
-import { EquiposInterface } from "../equipo/interface/equipos.interface";
 import moment = require('moment');
+//Services
+import { RondasService } from "../ronda/ronda.service";
+import { EquiposService } from "../equipo/equipo.service";
 import { ErrorService } from '../error/error.service';
+//Entities
+import { Usuarios } from './usuario.entity';
+import { Rondas } from "../ronda/ronda.entity";
+//Interfaces
+import { CreateUsuariodto } from './dto/create_usuario.dto';
+import { EquiposInterface } from "../equipo/interface/equipos.interface";
 
 @Injectable()
 export class UsuarioService {
@@ -22,13 +26,11 @@ export class UsuarioService {
     ){} 
 
     //Recuperar todos los usuarios
-    
     async getAll():Promise<Usuarios[]> {
         return await this.userRepository.find({relations:["equipo"]});
     }
     
-    //crear nuevo usuario
-    
+    //crear nuevo usuario    
     async createUser(newuser: CreateUsuariodto):Promise<Usuarios>{
         try {
             const nuevo = new Usuarios();
@@ -47,12 +49,11 @@ export class UsuarioService {
                 return await this.userRepository.save(nuevo);
             }
         } catch (error) {
-            console.error(error.message)
+            throw error;
         }
     }
     
     //actualizar datos del usuario
-
     async updateUsuario(idUsuario:number, usuarioActualizar: CreateUsuariodto):Promise<Usuarios>{
         const usuarioupdate = await this.userRepository.findOne(idUsuario);
         const Users = await this.userRepository.find({ where: { nombre: `${usuarioActualizar.nombre}` } });
@@ -78,6 +79,7 @@ export class UsuarioService {
         } 
     }
 
+    //Metodo para obtener un usuario por su equipo
     async getOneByTeam( idEquipo: number ) {
         const usuario = await this.userRepository.findOne( { where:{ equipo: idEquipo }, relations: ["equipo"] } );
         if( usuario) {
@@ -191,7 +193,6 @@ export class UsuarioService {
         const {nombre,pass}=authCredentials;
         const usuario = await this.userRepository.findOne({nombre});
         if (usuario && await usuario.validatepass(pass)) {
-            console.log(usuario.nombre);
             return await usuario.nombre;
         } else {
             return null;

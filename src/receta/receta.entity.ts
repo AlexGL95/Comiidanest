@@ -1,4 +1,6 @@
+//Modules
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity } from "typeorm";
+//Entities
 import { EquipoReceta } from "src/equipo_receta/equipo_receta.entity";
 
 export enum Categoria{

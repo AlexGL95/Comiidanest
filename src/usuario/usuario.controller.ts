@@ -1,7 +1,10 @@
+//Modules
 import { Controller, Get, Post, Body, Put, Delete, Res, HttpStatus, Param, ValidationPipe, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateUsuariodto } from './dto/create_usuario.dto';
+//Services
 import { UsuarioService } from './usuario.service';
+//Interfaces
+import { CreateUsuariodto } from './dto/create_usuario.dto';
 
 @Controller('usuarios')
 export class UsuarioController {

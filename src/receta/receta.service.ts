@@ -1,10 +1,16 @@
+//Modules
 import { Injectable } from '@nestjs/common';
-import { Receta } from './interface/receta.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Recetas } from './receta.entity';
-import { insertRecetas } from './dto/insert_receta.dto';
+//Services
 import { ErrorService } from 'src/error/error.service';
+//Controllers
+//Entities
+import { Recetas } from './receta.entity';
+//Interfaces
+import { Receta } from './interface/receta.interface';
+import { insertRecetas } from './dto/insert_receta.dto';
+
 
 @Injectable()
 export class RecetasService {
@@ -79,18 +85,11 @@ export class RecetasService {
     //Metodo para crear un objeto con todos los ingredientes de las recetas activas.    
     async getIngr() {
         const recetasArr = await this.recetasRepository.find({ where: { activo: true } });
-        
-        console.log(recetasArr);
-
         if (recetasArr.length > 0) {
             let ingredientes: String = "";
             //Concatena todos los ingredientes de las recetas activas
             recetasArr.forEach( recetaActiva => {
-                
-                console.log(recetaActiva.ingredientes);
-                ingredientes += "/" + recetaActiva.ingredientes;
-                console.log(ingredientes);
-                
+                ingredientes += "/" + recetaActiva.ingredientes;                
             } );
             return ingredientes;
         } else {
