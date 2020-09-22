@@ -85,26 +85,40 @@ export class EquiposService {
             // Llama a los datos actualizados de la base de datos de equipos -->
             const foundTeamActual = await this.equiposRepository.find()
             //<--
-            
+            // Se actualiza la propiedad equipo de usuarios -->
             for (let f = k*2; f < (k*2)+2; f++) {
+                // Se obtiene de una posicion aleatoria un usuario de la base de datos -->
                 const userUpdate = await this.usuariosRepository.findOne(array[arreglo[f]].id, {relations:["equipo"]});
+                //<--
+                // Al usuario obtenido se le guarda el equipo en su propiedad correspondiente -->
                 userUpdate.equipo = foundTeamActual[k];
+                //<--
+                // Se atualiza la base de datos de usuarios -->
                 await this.usuariosRepository.update(userUpdate.id, userUpdate);
-                
+                //<--
             }
-            
+            //<--
         }
         //<--
 
+        // Verifica si la cantidad de usuarios es impar -->
         if((array.length%2)!==0){
+            // Del arreglo de numero aleatorios se toma el ultimo y se busca esa posicion en al arreglo de usuarios -->
             const userUpdate2 = await this.usuariosRepository.findOne(array[arreglo[found.length-1]].id, {relations:["equipo"]});
+            //<--
+            // Al usuario obtenido su propiedad equipo se deja en null -->
             userUpdate2.equipo = null;
+            //<--
+            // Se actualiza la base de datos de usuarios -->
             await this.usuariosRepository.update(userUpdate2.id, userUpdate2);
+            //<--
         }
+        //<--
         
+        // Se retorna el arreglo actualizado de la base de datos de usuarios -->
         const found2 = await this.usuariosRepository.find({relations:["equipo"]});
-        
         return found2;
+        //<--
     }
         
 

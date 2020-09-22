@@ -9,15 +9,19 @@ export class RondasController {
 
     @Post()
     createRondas(@Res() response){
-        return this.rondasService.createRondas().then(rondas => {
-            response.status(HttpStatus.CREATED).json(rondas)
+        return this.rondasService.createRondas().then(createRondas => {
+            response.status(HttpStatus.CREATED).json(createRondas)
         }).catch(()=>{
             response.status(HttpStatus.CONFLICT).json({usuariom:"Error en la creacion de la ronda"});})
     }
 
     @Get()
-    getRondas(): Promise<Rondas[]>{
-        return this.rondasService.getRondas();
+    getRondas(@Res() response){
+        return this.rondasService.getRondas().then(getRondas => {
+            response.status(HttpStatus.OK).json(getRondas)
+        }).catch(() => {
+            response.status(HttpStatus.FORBIDDEN).json({mensaje:'error en la obtencion de rondas'});
+        })
     }
 
     @Delete('/:id')

@@ -91,10 +91,14 @@ export class RondasService {
     }
 
     async temporalRondas(): Promise<Rondas[]>{
+        // Constantes que almacenan la informacion de las bases de datos -->
         const foundEquipo = await this.equipoRepository.find();
         const foundRondas = await this.rondasRepository.find();
         const rondas = new Rondas();
+        //<--
+        // Variable para la obtencion de los días de la semana -->
         let g = 0;
+        //<--
 
         for(let j = 0; j<foundRondas.length; j++){
             g=0;
