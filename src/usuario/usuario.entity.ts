@@ -1,7 +1,9 @@
-
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity, Unique } from "typeorm";
-import { Equipo } from '../equipo/equipo.entity';
+//Modules
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity } from "typeorm";
 import * as bcrypt from 'bcrypt';
+//Entities
+import { Equipo } from '../equipo/equipo.entity';
+
 @Entity()
 export class Usuarios extends BaseEntity {
     @PrimaryGeneratedColumn()
@@ -24,8 +26,6 @@ export class Usuarios extends BaseEntity {
     
     async validatepass(pass:string):Promise<boolean>{
         const hash =await bcrypt.hash(pass,this.salt);
-        console.log(hash);
-        console.log(this.salt);
         return await hash === this.pass;
     }
 }

@@ -1,7 +1,10 @@
+//Modulos
 import { Module } from '@nestjs/common';
-import { Err } from "./error.entity";
-import { ErrorService } from './error.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+//Services
+import { ErrorService } from './error.service';
+//Entitys
+import { Err } from "./error.entity";
 
 @Module({
   imports: [TypeOrmModule.forFeature([ Err ])],

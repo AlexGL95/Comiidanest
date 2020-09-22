@@ -1,7 +1,9 @@
+//Modules
 import { Controller, Get, Post, Delete, Param, ParseIntPipe, Res, HttpStatus } from '@nestjs/common';
+//Services
 import { RondasService } from './ronda.service';
+//Entities
 import { Rondas } from './ronda.entity';
-import { response } from 'express';
 
 @Controller('rondas')
 export class RondasController {

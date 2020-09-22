@@ -1,3 +1,4 @@
+//Entities
 import { Categoria } from '../receta.entity';
 
 export interface Receta {

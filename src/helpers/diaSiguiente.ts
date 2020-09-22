@@ -1,4 +1,6 @@
+//Modules
 import moment = require('moment');
+
 export function diaSiguiente(fecha: string, date: string){
     let s = 0;
     let d1 = moment(fecha, 'MMM Do YY').add(1, 'days').weekday();

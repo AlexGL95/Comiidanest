@@ -1,11 +1,13 @@
+//Modulos
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+//Services
+import { ErrorService } from 'src/error/error.service';
+//Entitys
 import { EquipoReceta } from "./equipo_receta.entity";
 import { Equipo } from "../equipo/equipo.entity";
 import { Recetas } from "../receta/receta.entity";
-import { Repository } from 'typeorm';
-import { merge } from 'rxjs';
-import { ErrorService } from 'src/error/error.service';
 
 @Injectable()
 export class EquipoRecetaService {

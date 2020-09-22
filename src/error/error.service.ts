@@ -1,7 +1,10 @@
+//Modulos
 import { Injectable } from '@nestjs/common';
-import { Err } from "./error.entity";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+//Entitys
+import { Err } from "./error.entity";
+//Interfaces
 import { Createerrdto } from './dto/create_err.dto';
 
 @Injectable()
