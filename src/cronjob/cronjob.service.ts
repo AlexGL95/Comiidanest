@@ -1,5 +1,7 @@
+//Modulos
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+//Services
 import { RondasService } from '../ronda/ronda.service';
 import { ErrorService } from '../error/error.service';
 
@@ -13,7 +15,6 @@ export class CronjobService {
     //Ejecucion todos los dias a las 10AM
     @Cron(CronExpression.EVERY_DAY_AT_10AM)
     run10seconds(){
-        console.log('holis');
         this.rondaser.temporalRondas();
         this.erroservice.llenado();
     }

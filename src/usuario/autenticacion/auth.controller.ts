@@ -1,6 +1,9 @@
+//Modules
 import { Controller, Post, Body, Res, UnauthorizedException, HttpStatus } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+//Services
 import { UsuarioService } from '../usuario.service';
+//Interfaces
 import { CreateUsuariodto } from '../dto/create_usuario.dto';
 
 @Controller('auth')
@@ -18,10 +21,8 @@ export class AuthController {
        }else{
           const payload = { user };
            const accesstoken = await this.jwtService.sign(payload);
-           console.log(accesstoken);
            response.status(HttpStatus.ACCEPTED).json(accesstoken) ; 
        }
-       
-       
+
    }
 }

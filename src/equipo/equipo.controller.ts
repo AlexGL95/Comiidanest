@@ -1,10 +1,9 @@
-
-import { Controller, Get, Put, Body, Res, HttpStatus, Delete, Param, ParseIntPipe } from '@nestjs/common';
+//Modulos
+import { Controller, Get, Res, HttpStatus, Delete } from '@nestjs/common';
+//Services
 import { EquiposService } from './equipo.service';
-import { updateDateDto } from './dto/updateDate.dto';
-import { Usuarios } from 'src/usuario/usuario.entity';
+//Entitys
 import { Equipo } from './equipo.entity';
-import { response } from 'express';
 
 @Controller('equipos')
 export class EquiposController {

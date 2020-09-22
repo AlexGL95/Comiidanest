@@ -1,5 +1,8 @@
+//Modulos
 import { Controller, Put, Body, Res, HttpStatus } from '@nestjs/common';
+//Services
 import { EquipoRecetaService } from "./equipo_receta.service";
+//Interfaces
 import { assignRecipeDto } from "./dto/assign_recipe.dto";
 
 @Controller('equipo_receta')
