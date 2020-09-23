@@ -4,8 +4,8 @@ import { AppModule } from './app.module';
 const CORS_OPTIONS = {
   "origin": "http://localhost:4200",
   "methods": "GET,HEAD,PUT,POST,DELETE",
-  "allowedHeaders": 'Content-Type',
-  "preflightContinue": true,
+  "allowedHeaders": 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+  "preflightContinue": false,
   "optionsSuccessStatus": 204
 }
 
