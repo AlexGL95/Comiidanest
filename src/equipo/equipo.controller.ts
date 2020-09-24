@@ -1,9 +1,11 @@
 //Modulos
-import { Controller, Get, Res, HttpStatus, Delete } from '@nestjs/common';
+import { Controller, Get, Put, Res, HttpStatus, Delete, Body } from '@nestjs/common';
 //Services
 import { EquiposService } from './equipo.service';
 //Entitys
 import { Equipo } from './equipo.entity';
+//Interfaces
+import { updateDateDto } from "./dto/updateDate.dto";
 
 @Controller('equipos')
 export class EquiposController {
@@ -34,6 +36,18 @@ export class EquiposController {
         return this.equiposService.getAll()
             .then( equiposArr => {
                 response.status(HttpStatus.OK).json(equiposArr);
+            } )
+            .catch( err => {
+                response.status(HttpStatus.CONFLICT).json(err);
+            } );
+    }
+
+    //API updateDate (NOTA: Para un buen funcionamiento siempre envia las fechas mas de id mayor primero)
+    @Put()
+    updateDate( @Body() datesObject: updateDateDto, @Res() response ) {
+        return this.equiposService.updateDate(datesObject)
+            .then( () => {
+                response.status(HttpStatus.OK).json( {Mensaje: `Fecha cambiada del ${datesObject.fechaVieja} al ${datesObject.fechaNueva}`} );
             } )
             .catch( err => {
                 response.status(HttpStatus.CONFLICT).json(err);
