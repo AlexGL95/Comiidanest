@@ -165,7 +165,7 @@ export class UsuarioService {
 
                 //11.-Se modifica el equipo del compañero a null
                 try {
-                    await this.updateUsuario(compañero.id, { nombre: compañero.nombre, pass: compañero.pass, equipoid: null});
+                    await this.updateUsuario(compañero.id, { nombre: compañero.nombre, pass: compañero.pass,token:compañero.token, super: compañero.super ,equipoid: null});
                 } catch (err) {
                     throw err;
                 }
@@ -189,11 +189,11 @@ export class UsuarioService {
     }
 
     //Validar contraseña
-    async validatepass(authCredentials:CreateUsuariodto): Promise<string>{
+    async validatepass(authCredentials:CreateUsuariodto): Promise<Usuarios>{
         const {nombre,pass}=authCredentials;
         const usuario = await this.userRepository.findOne({nombre});
         if (usuario && await usuario.validatepass(pass)) {
-            return await usuario.nombre;
+            return await usuario;
         } else {
             return null;
         }
