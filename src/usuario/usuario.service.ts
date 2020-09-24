@@ -126,28 +126,31 @@ export class UsuarioService {
                 return await this.userRepository.delete(id);
             }
 
-            //6.-Si si pertenece, busca la fecha del ultimo equipo de la ronda.
+            //6.-Si si pertenece, busca el id y fecha del ultimo equipo de la ronda.
             else {
-                let fechaFinal: string;
+                let idUltimo: number;
+                let fechaUltimo: string;
                 try {
                     let equiposArr: EquiposInterface[];
                     equiposArr = await this.equipoService.getAll();
-                    fechaFinal = equiposArr[equiposArr.length - 1].nombre;
+                    idUltimo = equiposArr.length - 1;
+                    fechaUltimo = equiposArr[equiposArr.length - 1].nombre;
                 } catch (err) {
                     throw err;
                 }
 
                 //7.-Obten la fecha del equipo al que pertenece el usuario que se quiere eliminar
-                let fechaEquipo: string = user.equipo.fecha;
+                let idUsuario: number = user.equipo.id;
+                let fechaUsuario: string = user.equipo.fecha;
 
                 //8.-Cambia las fechas de las rondas en las que se encuentran
                 try {
-                    await this.equipoService.updateDate( { fechaVieja: fechaFinal, fechaNueva: fechaEquipo} );
+                    await this.equipoService.updateDate( { id: idUsuario, fechaNueva: fechaUltimo} );
                 } catch (err) {
                     throw err;
                 }
                 try {
-                    await this.equipoService.updateDate( { fechaVieja: fechaEquipo, fechaNueva: fechaFinal} );    
+                    await this.equipoService.updateDate( { id: idUltimo , fechaNueva: fechaUsuario} );    
                 } catch (err) {
                     throw err;
                 }

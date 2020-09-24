@@ -199,7 +199,7 @@ export class EquiposService {
 
     //Metodo que actualiza la fecha del equipo
     async updateDate( update: updateDateDto ){
-        const equipo = await this.equiposRepository.findOne( { where:{ fecha: update.fechaVieja } } );
+        const equipo = await this.equiposRepository.findOne(update.id);
         //Si la encuentra, la actualiza, si no, retorna un error.
         if (equipo) {
             equipo.fecha = update.fechaNueva;
