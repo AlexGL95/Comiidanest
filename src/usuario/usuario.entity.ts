@@ -20,6 +20,9 @@ export class Usuarios extends BaseEntity {
 
     @Column()
     salt:string;
+
+    @Column()
+    token:string;
     
     @ManyToOne(type => Equipo, Equipo=>Equipo.id)
     equipo:Equipo;
