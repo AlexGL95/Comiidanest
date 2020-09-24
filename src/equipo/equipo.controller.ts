@@ -47,7 +47,7 @@ export class EquiposController {
     updateDate( @Body() datesObject: updateDateDto, @Res() response ) {
         return this.equiposService.updateDate(datesObject)
             .then( () => {
-                response.status(HttpStatus.OK).json( {Mensaje: `Fecha cambiada del ${datesObject.fechaVieja} al ${datesObject.fechaNueva}`} );
+                response.status(HttpStatus.OK).json( {Mensaje: `Fecha cambiada correctamente`} );
             } )
             .catch( err => {
                 response.status(HttpStatus.CONFLICT).json(err);
