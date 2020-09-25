@@ -1,5 +1,5 @@
 //Modules
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import moment = require('moment');
@@ -66,6 +66,36 @@ export class UsuarioService {
             usuarioupdate.salt = await bcrypt.genSalt();
             usuarioupdate.pass = await bcrypt.hash(usuarioActualizar.pass, usuarioupdate.salt);
             return await this.userRepository.save(usuarioupdate)
+        }
+    }
+
+    //Actualizar solo nombre de usuario
+    async updateUsername(idUsuario:number, usuarioActualizar: CreateUsuariodto):Promise<Usuarios>{
+        const usuarioupdate = await this.userRepository.findOne(idUsuario);
+        const Users = await this.userRepository.find({ where: { nombre: `${usuarioActualizar.nombre}` } });
+        if (Users.length > 1) {//comprueba que no haya mas de 1 usuario con el mismo nombre
+            this.sererr.throwError('T-805');
+        } else {//actualiza datos del usuario
+            usuarioupdate.nombre=usuarioActualizar.nombre;
+            return await this.userRepository.save(usuarioupdate);
+        }
+    }
+
+    //Actualizar solo contraseña de usuario
+    async updatepass(idUsuario:number, usuarioActualizar: CreateUsuariodto):Promise<Usuarios>{
+        const bcrypt = require ("bcrypt");
+        const usuarioupdate = await this.userRepository.findOne(idUsuario);
+        const Users = await this.userRepository.find({ where: { nombre: `${usuarioActualizar.nombre}` } });
+        usuarioActualizar.pass = await bcrypt.hash(usuarioActualizar.pass, usuarioupdate.salt);
+        if (Users.length > 1) {//comprueba que no haya mas de 1 usuario con el mismo nombre
+            this.sererr.throwError('T-805');
+        } else if(usuarioActualizar.pass == usuarioupdate.pass ) {//actualiza datos del usuario
+            usuarioupdate.nombre=usuarioActualizar.nombre;
+            usuarioupdate.salt = await bcrypt.genSalt();
+            usuarioupdate.pass = await bcrypt.hash(usuarioActualizar.newpass, usuarioupdate.salt);
+            return await this.userRepository.save(usuarioupdate);
+        }else{
+            throw new UnauthorizedException('La contraseña no es valida');
         }
     }
 

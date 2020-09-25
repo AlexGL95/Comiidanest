@@ -23,7 +23,7 @@ export class AuthController {
           const payload = { name };
            const accesstoken = await this.jwtService.sign(payload);
            user.token = accesstoken;
-           response.status(HttpStatus.ACCEPTED).json({nombre:user.nombre, token: user.token, super:user.super}) ; 
+           response.status(HttpStatus.ACCEPTED).json({nombre:user.nombre, token: user.token, super:user.super, iduser: user.id}) ; 
        }
 
    }
