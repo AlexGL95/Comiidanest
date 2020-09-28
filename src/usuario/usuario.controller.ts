@@ -32,7 +32,7 @@ export class UsuarioController {
         });
     }
 
-    @Get(':id')
+    @Get('/:id')
     async getone(@Param('id') idusuario, @Res() response){
         const user = await this.usuariosservice.getById(idusuario);
         if (!user) {
@@ -50,7 +50,6 @@ export class UsuarioController {
 
     @Put(':id')
     async update(@Body(ValidationPipe) updateUsuarioDto: CreateUsuariodto, @Res() response,@Param('id') idusuario){
-       
         console.log('se putio sin if');
         if (updateUsuarioDto.nombre && !updateUsuarioDto.newpass) {
            this.usuariosservice.updateUsername(idusuario,updateUsuarioDto);
