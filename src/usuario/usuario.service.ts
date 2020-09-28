@@ -86,16 +86,13 @@ export class UsuarioService {
         const bcrypt = require ("bcrypt");
         const usuarioupdate = await this.userRepository.findOne(idUsuario);
         const Users = await this.userRepository.find({ where: { nombre: `${usuarioActualizar.nombre}` } });
-        usuarioActualizar.pass = await bcrypt.hash(usuarioActualizar.pass, usuarioupdate.salt);
         if (Users.length > 1) {//comprueba que no haya mas de 1 usuario con el mismo nombre
             this.sererr.throwError('T-805');
-        } else if(usuarioActualizar.pass == usuarioupdate.pass ) {//actualiza datos del usuario
+        } else {//actualiza datos del usuario
             usuarioupdate.nombre=usuarioActualizar.nombre;
             usuarioupdate.salt = await bcrypt.genSalt();
             usuarioupdate.pass = await bcrypt.hash(usuarioActualizar.newpass, usuarioupdate.salt);
             return await this.userRepository.save(usuarioupdate);
-        }else{
-            throw new UnauthorizedException('La contraseña no es valida');
         }
     }
 
