@@ -50,15 +50,17 @@ export class UsuarioController {
 
     @Put(':id')
     async update(@Body(ValidationPipe) updateUsuarioDto: CreateUsuariodto, @Res() response,@Param('id') idusuario){
-       if (updateUsuarioDto.nombre && !updateUsuarioDto.newpass) {
+       
+        console.log('se putio sin if');
+        if (updateUsuarioDto.nombre && !updateUsuarioDto.newpass) {
            this.usuariosservice.updateUsername(idusuario,updateUsuarioDto);
            await response.status(HttpStatus.OK).json('Todo correcto');
         }else if(updateUsuarioDto.newpass) {
-           this.usuariosservice.updatepass(idusuario,updateUsuarioDto);
+            console.log('se putio');
+            this.usuariosservice.updatepass(idusuario,updateUsuarioDto);
            await response.status(HttpStatus.OK).json('Todo correcto contraseña');
         }else{
            this.usuariosservice.updateUsuario(idusuario,updateUsuarioDto);
-           
        }
         
         

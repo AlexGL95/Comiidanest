@@ -43,6 +43,7 @@ export class UsuarioService {
                 nuevo.nombre=newuser.nombre;
                 nuevo.equipo=null;
                 nuevo.super = false;
+                nuevo.token='';
                 const bcrypt = require ("bcrypt");
                 nuevo.salt = await bcrypt.genSalt();
                 nuevo.pass = await bcrypt.hash(newuser.pass, nuevo.salt);
