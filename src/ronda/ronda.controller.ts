@@ -4,12 +4,13 @@ import { Controller, Get, Post, Delete, Param, ParseIntPipe, Res, HttpStatus } f
 import { RondasService } from './ronda.service';
 //Entities
 import { Rondas } from './ronda.entity';
+import { response } from 'express';
 
 @Controller('rondas')
 export class RondasController {
     constructor(private rondasService: RondasService){}
 
-    @Post()
+    @Get('/ronda')
     createRondas(@Res() response){
         return this.rondasService.createRondas().then(createRondas => {
             response.status(HttpStatus.CREATED).json(createRondas)
@@ -26,9 +27,13 @@ export class RondasController {
         })
     }
 
-    @Delete('/:id')
-    deleteTeam(@Param('id', ParseIntPipe) id: number): Promise<Rondas[]> {
-        return this.rondasService.deleteRondas(id);
+    @Delete()
+    deleteTeam(@Res() response){
+        return this.rondasService.deleteRondas().then(deleteRondas => {
+            response.status(HttpStatus.OK).json(deleteRondas)
+        }).catch(err => {
+            response.status(HttpStatus.CONFLICT).json(err)
+        })
     }
     
     @Get('/activa')
