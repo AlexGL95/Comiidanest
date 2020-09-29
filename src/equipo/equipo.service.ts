@@ -150,7 +150,7 @@ export class EquiposService {
             let nEquipos: number = 0;
             equiposTemp.forEach( equipo => {
                 let fechaEquipo = moment(equipo.fecha, 'MMM Do YY').toDate();
-                if( (fechaEquipo.getMonth() <= fechaComparacion.getMonth()) && (fechaEquipo.getDate() > fechaComparacion.getDate()) ) {
+                if( (fechaEquipo.getMonth() > fechaComparacion.getMonth()) || ( (fechaEquipo.getDate() > fechaComparacion.getDate()) && (fechaEquipo.getMonth() === fechaComparacion.getMonth())) ) {
                     nEquipos += 1;
                 }
             } );
