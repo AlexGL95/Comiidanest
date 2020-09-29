@@ -164,7 +164,7 @@ export class EquiposService {
             let nEquipos: number = 0;
             equiposTemp.forEach( equipo => {
                 let fechaEquipo = moment(equipo.fecha, 'MMM Do YY').toDate();
-                if( (fechaEquipo.getMonth() <= fechaComparacion.getMonth()) && (fechaEquipo.getDate() > fechaComparacion.getDate()) ) {
+                if( (fechaEquipo.getMonth() > fechaComparacion.getMonth()) || ( (fechaEquipo.getDate() > fechaComparacion.getDate()) && (fechaEquipo.getMonth() === fechaComparacion.getMonth())) ) {
                     nEquipos += 1;
                 }
             } );
@@ -213,7 +213,7 @@ export class EquiposService {
 
     //Metodo que actualiza la fecha del equipo
     async updateDate( update: updateDateDto ){
-        const equipo = await this.equiposRepository.findOne( { where:{ fecha: update.fechaVieja } } );
+        const equipo = await this.equiposRepository.findOne(update.id);
         //Si la encuentra, la actualiza, si no, retorna un error.
         if (equipo) {
             equipo.fecha = update.fechaNueva;

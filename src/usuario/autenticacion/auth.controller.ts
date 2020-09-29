@@ -15,13 +15,15 @@ export class AuthController {
 
    @Post('/singin')
    async singIn(@Body()authCredentials:CreateUsuariodto, @Res() response){
-       const user = await this.auth.validatepass(authCredentials);
+       let user = await this.auth.validatepass(authCredentials);
        if(!user){
            throw new UnauthorizedException('Credenciales invalidas');
        }else{
-          const payload = { user };
+           let name= user.nombre;
+           const payload = { name };
            const accesstoken = await this.jwtService.sign(payload);
-           response.status(HttpStatus.ACCEPTED).json(accesstoken) ; 
+           user.token = accesstoken;
+           response.status(HttpStatus.ACCEPTED).json({nombre:user.nombre, token: user.token, super:user.super, iduser: user.id, idequipo: user.equipo}) ; 
        }
 
    }

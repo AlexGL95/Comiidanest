@@ -1,4 +1,4 @@
 export class updateDateDto {
-    readonly fechaVieja: string;
+    readonly id: number;
     readonly fechaNueva: string;
 }

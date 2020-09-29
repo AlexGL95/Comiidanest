@@ -1,5 +1,5 @@
 //Modules
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import moment = require('moment');
@@ -43,6 +43,7 @@ export class UsuarioService {
                 nuevo.nombre=newuser.nombre;
                 nuevo.equipo=null;
                 nuevo.super = false;
+                nuevo.token='';
                 const bcrypt = require ("bcrypt");
                 nuevo.salt = await bcrypt.genSalt();
                 nuevo.pass = await bcrypt.hash(newuser.pass, nuevo.salt);
@@ -66,6 +67,33 @@ export class UsuarioService {
             usuarioupdate.salt = await bcrypt.genSalt();
             usuarioupdate.pass = await bcrypt.hash(usuarioActualizar.pass, usuarioupdate.salt);
             return await this.userRepository.save(usuarioupdate)
+        }
+    }
+
+    //Actualizar solo nombre de usuario
+    async updateUsername(idUsuario:number, usuarioActualizar: CreateUsuariodto):Promise<Usuarios>{
+        const usuarioupdate = await this.userRepository.findOne(idUsuario);
+        const Users = await this.userRepository.find({ where: { nombre: `${usuarioActualizar.nombre}` } });
+        if (Users.length > 1) {//comprueba que no haya mas de 1 usuario con el mismo nombre
+            this.sererr.throwError('T-805');
+        } else {//actualiza datos del usuario
+            usuarioupdate.nombre=usuarioActualizar.nombre;
+            return await this.userRepository.save(usuarioupdate);
+        }
+    }
+
+    //Actualizar solo contraseña de usuario
+    async updatepass(idUsuario:number, usuarioActualizar: CreateUsuariodto):Promise<Usuarios>{
+        const bcrypt = require ("bcrypt");
+        const usuarioupdate = await this.userRepository.findOne(idUsuario);
+        const Users = await this.userRepository.find({ where: { nombre: `${usuarioActualizar.nombre}` } });
+        if (Users.length > 1) {//comprueba que no haya mas de 1 usuario con el mismo nombre
+            this.sererr.throwError('T-805');
+        } else {//actualiza datos del usuario
+            usuarioupdate.nombre=usuarioActualizar.nombre;
+            usuarioupdate.salt = await bcrypt.genSalt();
+            usuarioupdate.pass = await bcrypt.hash(usuarioActualizar.newpass, usuarioupdate.salt);
+            return await this.userRepository.save(usuarioupdate);
         }
     }
 
@@ -126,28 +154,31 @@ export class UsuarioService {
                 return await this.userRepository.delete(id);
             }
 
-            //6.-Si si pertenece, busca la fecha del ultimo equipo de la ronda.
+            //6.-Si si pertenece, busca el id y fecha del ultimo equipo de la ronda.
             else {
-                let fechaFinal: string;
+                let idUltimo: number;
+                let fechaUltimo: string;
                 try {
                     let equiposArr: EquiposInterface[];
                     equiposArr = await this.equipoService.getAll();
-                    fechaFinal = equiposArr[equiposArr.length - 1].nombre;
+                    idUltimo = equiposArr.length - 1;
+                    fechaUltimo = equiposArr[equiposArr.length - 1].nombre;
                 } catch (err) {
                     throw err;
                 }
 
                 //7.-Obten la fecha del equipo al que pertenece el usuario que se quiere eliminar
-                let fechaEquipo: string = user.equipo.fecha;
+                let idUsuario: number = user.equipo.id;
+                let fechaUsuario: string = user.equipo.fecha;
 
                 //8.-Cambia las fechas de las rondas en las que se encuentran
                 try {
-                    await this.equipoService.updateDate( { fechaVieja: fechaFinal, fechaNueva: fechaEquipo} );
+                    await this.equipoService.updateDate( { id: idUsuario, fechaNueva: fechaUltimo} );
                 } catch (err) {
                     throw err;
                 }
                 try {
-                    await this.equipoService.updateDate( { fechaVieja: fechaEquipo, fechaNueva: fechaFinal} );    
+                    await this.equipoService.updateDate( { id: idUltimo , fechaNueva: fechaUsuario} );    
                 } catch (err) {
                     throw err;
                 }
@@ -165,7 +196,7 @@ export class UsuarioService {
 
                 //11.-Se modifica el equipo del compañero a null
                 try {
-                    await this.updateUsuario(compañero.id, { nombre: compañero.nombre, pass: compañero.pass, equipoid: null});
+                    await this.updateUsuario(compañero.id, { nombre: compañero.nombre, pass: compañero.pass,token:compañero.token, super: compañero.super ,equipoid: null});
                 } catch (err) {
                     throw err;
                 }
@@ -189,11 +220,11 @@ export class UsuarioService {
     }
 
     //Validar contraseña
-    async validatepass(authCredentials:CreateUsuariodto): Promise<string>{
+    async validatepass(authCredentials:CreateUsuariodto): Promise<Usuarios>{
         const {nombre,pass}=authCredentials;
         const usuario = await this.userRepository.findOne({nombre});
         if (usuario && await usuario.validatepass(pass)) {
-            return await usuario.nombre;
+            return await usuario;
         } else {
             return null;
         }
