@@ -20,10 +20,10 @@ export class AuthController {
            throw new UnauthorizedException('Credenciales invalidas');
        }else{
            let name= user.nombre;
-          const payload = { name };
+           const payload = { name };
            const accesstoken = await this.jwtService.sign(payload);
            user.token = accesstoken;
-           response.status(HttpStatus.ACCEPTED).json({nombre:user.nombre, token: user.token, super:user.super, iduser: user.id}) ; 
+           response.status(HttpStatus.ACCEPTED).json({nombre:user.nombre, token: user.token, super:user.super, iduser: user.id, idequipo: user.equipo}) ; 
        }
 
    }
