@@ -222,7 +222,7 @@ export class UsuarioService {
     //Validar contraseña
     async validatepass(authCredentials:CreateUsuariodto): Promise<Usuarios>{
         const {nombre,pass}=authCredentials;
-        const usuario = await this.userRepository.findOne({nombre});
+        const usuario = await this.userRepository.findOne({nombre}, {relations: ["equipo"]} );
         if (usuario && await usuario.validatepass(pass)) {
             return await usuario;
         } else {

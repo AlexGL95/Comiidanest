@@ -14,7 +14,7 @@ export class CreateUsuariodto {
     {message:'La contraseña es muy debil'}, //se requiere al menos una letra mayuscula una minuscula y un numero o caracter especial
     )
     @IsOptional()
-    pass:string;
+    pass?:string;
     
     @IsString()
     @IsOptional()
