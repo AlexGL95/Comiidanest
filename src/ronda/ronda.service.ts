@@ -94,9 +94,13 @@ export class RondasService {
 
     async temporalRondas(): Promise<Rondas[]>{
         const usuariosArr: Usuarios[] = await this.usuariosRepository.find();
+        // Constantes que almacenan la informacion de las bases de datos -->
         const foundRondas = await this.rondasRepository.find();
         const rondas = new Rondas();
+        //<--
+        // Variable para la obtencion de los días de la semana -->
         let g = 0;
+        //<--
 
         for(let j = 0; j<foundRondas.length; j++){
             g=0;
@@ -128,13 +132,11 @@ export class RondasService {
         return await this.rondasRepository.find();
     }
 
-    async deleteRondas(id: number): Promise<Rondas[]> {
-        const result = await this.rondasRepository.delete(id);
-        if (result.affected === 0) {
-            throw new NotFoundException(`User with ID "${id}" not found`);
-        }
-        const foundRondas= await this.rondasRepository.find();
-        return foundRondas;
+    async deleteRondas(): Promise<Rondas[]> {
+        const foundRondas = await this.rondasRepository.find();
+        const result = await this.rondasRepository.delete(foundRondas[foundRondas.length-1].id);
+        const foundRondasActual= await this.rondasRepository.find();
+        return foundRondasActual;
     }
 
         //Metodo recortador de ronda activa
