@@ -23,7 +23,6 @@ export class UsuarioController {
     }
 
     @Get()
-    @UseGuards(AuthGuard())
     getall(@Res() response){
         this.usuariosservice.getAll().then(usuarioslist =>{
             response.status(HttpStatus.OK).json(usuarioslist);
