@@ -105,7 +105,7 @@ export class RondasService {
         for(let j = 0; j<foundRondas.length; j++){
             g=0;
             for(let i = 0; i<(Math.floor(usuariosArr.length/2)); i++){
-                let d1 = moment().add(1, 'days').toDate();
+                let d1 = moment().toDate();
                 let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
                 let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').toDate();
                 let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').toDate();
@@ -142,7 +142,7 @@ export class RondasService {
         //Metodo recortador de ronda activa
         async recrondas():Promise<Rondas>{
             let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
-            let rondaActual = moment().add(1, 'days').toDate();
+            let rondaActual = moment().toDate();
             let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
 
             if (ronda) {
