@@ -145,7 +145,7 @@ export class EquiposService {
     }
 
     //Metodo que retorna los objetos equipo de manera organizada
-    async getAll() {//: Promise<EquiposInterface[]>  {
+    async getAll(): Promise<EquiposInterface[]>  {
 
         //1.-Crea la fecha actual
         let fechaActual = new Date();
@@ -177,7 +177,8 @@ export class EquiposService {
                 let fecha = moment(equiposTemp[m].fecha, 'MMM Do YY');
 
                 //8.-Consulta en usuarios los usuarios con el id del equipo
-                let usuariosEnEquipo = await this.usuariosRepository.find( { where: { equipo: `${m+1}` } } );
+                let primerId = await this.equiposRepository.findOne();
+                let usuariosEnEquipo = await this.usuariosRepository.find( { relations:["equipo"], where: { equipo: (primerId.id + m) } });
 
                 //9.-Genera un arreglo con los integrantes del equipo
                 let integrantesArr: string[] = [];
@@ -186,7 +187,7 @@ export class EquiposService {
                 }
 
                 //10.-Consulta la tabla de equipo_receta y extrae las recetas que contengan en equipoId el equipo
-                let recetasEnEquipo = await this.equipos_recetasRepository.find( { relations:["recetas"], where: { equipo: `${m+1}` } });
+                let recetasEnEquipo = await this.equipos_recetasRepository.find( { relations:["recetas"], where: { equipo: (primerId.id + m) } });
 
                 //11.-Genera un arreglo con los nombres de las recetas asignadas a un equipo
                 let recetasArr: string[] = [];
