@@ -139,6 +139,12 @@ export class UsuarioService {
         //3.-Si no (rondaActiva == 0) , elimina el usuario.
         if (rondaActiva === 0) {
             return await this.userRepository.delete(id);
+            //Llama recalcularRondas.
+            try {
+                await this.rondasService.recalcularRondas();
+            } catch (err) {
+                throw err;
+            }
         }
 
         //4.-Si si, busca el usuario.
@@ -153,6 +159,12 @@ export class UsuarioService {
             //5.-Si no pertenece a un equipo actualmente (equipo == null) , elimina el usuario.
             if(user.equipo === null) {
                 return await this.userRepository.delete(id);
+                //Llama recalcularRondas.
+                try {
+                    await this.rondasService.recalcularRondas();
+                } catch (err) {
+                    throw err;
+                }
             }
 
             //6.-Si si pertenece, busca el id y fecha del ultimo equipo de la ronda.
