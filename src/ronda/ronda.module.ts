@@ -9,11 +9,15 @@ import { RondasController } from './ronda.controller';
 import { Equipo } from 'src/equipo/equipo.entity';
 import { Rondas } from './ronda.entity';
 import { Usuarios } from 'src/usuario/usuario.entity';
+import { EquiposService } from 'src/equipo/equipo.service';
+import { EquipoReceta } from 'src/equipo_receta/equipo_receta.entity';
+import { Err } from 'src/error/error.entity';
+import { ErrorService } from 'src/error/error.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Equipo, Rondas, Usuarios])],
+    TypeOrmModule.forFeature([Equipo, Rondas, Usuarios, EquipoReceta, Err])],
   controllers: [RondasController],
-  providers: [RondasService]
+  providers: [RondasService, EquiposService, ErrorService]
 })
 export class RondasModule {}

@@ -7,10 +7,12 @@ import moment = require('moment');
 import { Equipo } from '../equipo/equipo.entity';
 import { Rondas } from './ronda.entity';
 import { Usuarios } from 'src/usuario/usuario.entity';
+import { EquiposService } from 'src/equipo/equipo.service';
 
 @Injectable()
 export class RondasService {
     constructor(
+        private equipoService: EquiposService,
         @InjectRepository(Equipo)
         private equipoRepository: Repository<Equipo>,
         @InjectRepository(Rondas)
@@ -60,6 +62,8 @@ export class RondasService {
             rondas.hora_de_generacion = dateActual.getHours().toString() ;
             //Verificacion de si la ronda tiene un fin de semana intrinseco
             await this.diaSiguiente(length, vectoMoment);
+            //Se aleatoriza la ronda
+            await this.equipoService.getTeams();
         //Si hay rondas futuras = Crea una ronda a partir de la siguiente fecha habil de la ultima ronda
         } else{
             //Hora de apertura de la ronda
