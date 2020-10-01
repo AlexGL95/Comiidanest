@@ -5,17 +5,20 @@ import { AuthGuard } from '@nestjs/passport';
 import { UsuarioService } from './usuario.service';
 //Interfaces
 import { CreateUsuariodto } from './dto/create_usuario.dto';
+import { RondasService } from '../ronda/ronda.service';
 
 @Controller('usuarios')
 export class UsuarioController {
     
     constructor(
-        private usuariosservice: UsuarioService
+        private usuariosservice: UsuarioService,
+        private rondasService: RondasService
     ) {}
 
     @Post()
-    create (@Body() createUsuarioDto: CreateUsuariodto,@Res() response ){
-        this.usuariosservice.createUser(createUsuarioDto).then( usuariom =>{
+     create (@Body() createUsuarioDto: CreateUsuariodto,@Res() response ){
+        this.usuariosservice.createUser(createUsuarioDto).then(  usuariom =>{
+            this.rondasService.recalcularRondas();
             response.status(HttpStatus.CREATED).json(usuariom);
         }).catch( ()=>{
             response.status(HttpStatus.CONFLICT).json({usuariom:"Error en la creacion del usuario"});

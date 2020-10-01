@@ -49,6 +49,7 @@ export class UsuarioService {
                 nuevo.pass = await bcrypt.hash(newuser.pass, nuevo.salt);
                 return await this.userRepository.save(nuevo);
             }
+            
         } catch (error) {
             throw error;
         }
