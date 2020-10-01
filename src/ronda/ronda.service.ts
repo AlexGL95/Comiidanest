@@ -8,11 +8,13 @@ import { Equipo } from '../equipo/equipo.entity';
 import { Rondas } from './ronda.entity';
 import { Usuarios } from 'src/usuario/usuario.entity';
 import { EquiposService } from 'src/equipo/equipo.service';
+import { RecetasService } from '../receta/receta.service';
 
 @Injectable()
 export class RondasService {
     constructor(
         private equipoService: EquiposService,
+        private RecetaServ: RecetasService,
         @InjectRepository(Equipo)
         private equipoRepository: Repository<Equipo>,
         @InjectRepository(Rondas)
@@ -118,7 +120,7 @@ export class RondasService {
                 };
                 if((d1>=d4) && (d1<=d3)){
                     rondas.activa = true;
-                    
+                    await this.RecetaServ.changeall();
                 }else{
                     rondas.activa = false;
                 }

@@ -18,6 +18,8 @@ import { Equipo } from '../equipo/equipo.entity';
 import { Rondas } from '../ronda/ronda.entity';
 import { Err } from 'src/error/error.entity';
 import { Usuarios } from './usuario.entity';
+import { RecetasService } from '../receta/receta.service';
+import { Recetas } from '../receta/receta.entity';
 
 @Module({
     imports: [
@@ -25,7 +27,8 @@ import { Usuarios } from './usuario.entity';
             EquipoReceta,
             Usuarios, 
             Rondas, 
-            Equipo, 
+            Equipo,
+            Recetas, 
             Err]),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
@@ -50,7 +53,8 @@ import { Usuarios } from './usuario.entity';
         EquiposService, 
         RondasService, 
         ErrorService,
-        JwtStrategy, 
+        JwtStrategy,
+        RecetasService 
     ],
     exports:[
         PassportModule,

@@ -13,11 +13,13 @@ import { EquiposService } from 'src/equipo/equipo.service';
 import { EquipoReceta } from 'src/equipo_receta/equipo_receta.entity';
 import { Err } from 'src/error/error.entity';
 import { ErrorService } from 'src/error/error.service';
+import { RecetasService } from '../receta/receta.service';
+import { Recetas } from '../receta/receta.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Equipo, Rondas, Usuarios, EquipoReceta, Err])],
+    TypeOrmModule.forFeature([Equipo, Rondas, Usuarios, EquipoReceta, Err, Recetas])],
   controllers: [RondasController],
-  providers: [RondasService, EquiposService, ErrorService]
+  providers: [RondasService, EquiposService, ErrorService, RecetasService]
 })
 export class RondasModule {}
