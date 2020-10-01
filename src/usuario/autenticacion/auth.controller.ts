@@ -1,10 +1,12 @@
 //Modules
-import { Controller, Post, Body, Res, UnauthorizedException, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Res, UnauthorizedException, HttpStatus, Get } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 //Services
 import { UsuarioService } from '../usuario.service';
 //Interfaces
 import { CreateUsuariodto } from '../dto/create_usuario.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { UseGuards } from '@nestjs/common/decorators/core/use-guards.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -30,5 +32,10 @@ export class AuthController {
            }
        }
 
+   }
+   @Get()
+   @UseGuards(AuthGuard())
+   async verify(@Res() response){
+    response.status(HttpStatus.OK).json({autorized: true});
    }
 }
