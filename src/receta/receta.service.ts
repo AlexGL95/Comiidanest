@@ -81,6 +81,15 @@ export class RecetasService {
             this.errorService.throwError("T-802");
         }
     }
+    // Cambia el estado de todas las recetas a falso
+    async changeall( ) {
+        const receta = await this.recetasRepository.find();
+        //Si la encuentra, la actualiza, si no, retorna un error.
+        for (let index = 0; index < receta.length; index++) {
+            receta[index].activo = false;
+            return await this.recetasRepository.save(receta[index]);
+        }
+    }
 
     //Metodo para crear un objeto con todos los ingredientes de las recetas activas.    
     async getIngr() {
