@@ -10,6 +10,7 @@ import { EquipoRecetaModule } from './equipo_receta/equipo_receta.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronjobModule } from './cronjob/cronjob.module';
 import { ErrorModule } from './error/error.module';
+import { CondimentoModule } from './condimento/condimento.module';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { ErrorModule } from './error/error.module';
     EquipoRecetaModule,
     ScheduleModule.forRoot(),
     CronjobModule,
-    ErrorModule
+    ErrorModule,
+    CondimentoModule
   ],
   controllers: [
     AppController

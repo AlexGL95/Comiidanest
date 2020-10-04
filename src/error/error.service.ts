@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 //Entitys
-import { Err } from "./error.entity";
+import { Err } from './error.entity';
 //Interfaces
 import { Createerrdto } from './dto/create_err.dto';
 
@@ -27,25 +27,26 @@ export class ErrorService {
     async llenado(){
         //variable para validar si la tabla esta vacia
         const errtable = await this.errorRepository.find()
-        if (errtable.length<=0) {
-            let err: Createerrdto [] = [
-                {codigo:``,descripcion:"Usuario no encontrado"},
-                {codigo:``,descripcion:"Receta no encontrada"},
-                {codigo:``,descripcion:"Equipo no encontrado"},
-                {codigo:``,descripcion:"Ronda no encontrada"},
-                {codigo:``,descripcion:"Usuario duplicado"},
-                {codigo:``,descripcion:"Receta duplicada"},
-                {codigo:``,descripcion:"Equipo duplicado"},
-                {codigo:``,descripcion:"Ronda duplicada"},
-                {codigo:``,descripcion:"Tipo de dato inesperado"},
-                {codigo:``,descripcion:"Excede longitud de caracteres"},
-                {codigo:``,descripcion:"No hay usuarios suficientes"},
-                {codigo:``,descripcion:"Se elimino ronda activa"},
-                {codigo:``,descripcion:"Parametros insuficientes"},
-                {codigo:``,descripcion:"Base de datos no responde"},
-                {codigo:``,descripcion:"No hay ingredientes"},] ; //objeto de tipo error para poblar la tabla
-            //arreglo de strings para las descripciones delos errores
-            
+        let err: Err [] = [
+            {id:0,codigo:``,descripcion:"Usuario no encontrado"}, //T-801
+            {id:0,codigo:``,descripcion:"Receta no encontrada"},
+            {id:0,codigo:``,descripcion:"Equipo no encontrado"},
+            {id:0,codigo:``,descripcion:"Ronda no encontrada"},
+            {id:0,codigo:``,descripcion:"Usuario duplicado"},
+            {id:0,codigo:``,descripcion:"Receta duplicada"}, //T-805
+            {id:0,codigo:``,descripcion:"Equipo duplicado"},
+            {id:0,codigo:``,descripcion:"Ronda duplicada"},
+            {id:0,codigo:``,descripcion:"Tipo de dato inesperado"},
+            {id:0,codigo:``,descripcion:"Excede longitud de caracteres"}, //T-809
+            {id:0,codigo:``,descripcion:"No hay usuarios suficientes"},
+            {id:0,codigo:``,descripcion:"Se elimino ronda activa"},
+            {id:0,codigo:``,descripcion:"Parametros insuficientes"},
+            {id:0,codigo:``,descripcion:"Base de datos no responde"},
+            {id:0,codigo:``,descripcion:"No hay ingredientes"},
+            {id:0,codigo:``,descripcion:"Codimento duplicado"},  //T-815
+            {id:0,codigo:``,descripcion:"Condimento no encontrado"},] ; 
+        //arreglo de strings para las descripciones delos errores
+        if (errtable.length<=0 || errtable.length < err.length) {
             for (let i = 0; i < err.length; i++) {
                 if ((i+1)>=10) {
                     err[i].codigo='T-8'+(i+1);

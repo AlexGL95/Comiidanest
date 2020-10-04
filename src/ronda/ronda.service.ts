@@ -97,6 +97,13 @@ export class RondasService {
         const foundRondasActual = await this.rondasRepository.find();
         return foundRondasActual;
     }
+    //  funcion para eliminar la primer ronda de la tabla 
+    async delRondaprime(){
+        const rondas: Rondas[] = await this.rondasRepository.find();
+        if ((rondas.length > 0) && (!rondas[0].activa)) {
+            await this.rondasRepository.delete(rondas[0].id);
+        }
+    }
 
     async temporalRondas(): Promise<Rondas[]>{
         const usuariosArr: Usuarios[] = await this.usuariosRepository.find();
@@ -121,6 +128,7 @@ export class RondasService {
                 if((d1>=d4) && (d1<=d3)){
                     rondas.activa = true;
                     await this.RecetaServ.changeall();
+                    
                 }else{
                     rondas.activa = false;
                 }
@@ -129,6 +137,7 @@ export class RondasService {
             foundRondas[j].activa = rondas.activa;
             
             await this.rondasRepository.save(foundRondas[j]);
+            //await this.delRondaprime();
         }
         const foundRondasActual = await this.rondasRepository.find();
         return foundRondasActual;

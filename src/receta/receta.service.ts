@@ -85,9 +85,12 @@ export class RecetasService {
     async changeall( ) {
         const receta = await this.recetasRepository.find();
         //Si la encuentra, la actualiza, si no, retorna un error.
-        for (let index = 0; index < receta.length; index++) {
-            receta[index].activo = false;
-            return await this.recetasRepository.save(receta[index]);
+        if (receta.length > 0) {
+            for (let index = 0; index < receta.length; index++) {
+                receta[index].activo = false;
+                return await this.recetasRepository.update(receta[index].id,receta[index]);
+            }
+            
         }
     }
 
