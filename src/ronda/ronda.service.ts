@@ -9,6 +9,8 @@ import { Rondas } from './ronda.entity';
 import { Usuarios } from 'src/usuario/usuario.entity';
 import { EquiposService } from 'src/equipo/equipo.service';
 import { RecetasService } from '../receta/receta.service';
+import { EquipoReceta } from 'src/equipo_receta/equipo_receta.entity';
+import { Recetas } from 'src/receta/receta.entity';
 
 @Injectable()
 export class RondasService {
@@ -20,7 +22,11 @@ export class RondasService {
         @InjectRepository(Rondas)
         private rondasRepository: Repository<Rondas>,
         @InjectRepository(Usuarios)
-        private usuariosRepository: Repository<Usuarios>
+        private usuariosRepository: Repository<Usuarios>,
+        @InjectRepository(EquipoReceta)
+        private equipoRecetasRepository: Repository<EquipoReceta>,
+        @InjectRepository(Recetas)
+        private recetasRepository: Repository<Recetas>
     ){}
 
     //Metodo que guarda en un vector los dias de una ronda
@@ -61,7 +67,7 @@ export class RondasService {
         //Si no hay rondas guardas o solo hay rondas obsoletas = genera una ronda el dia siguidente
         if ( (foundRondas.length === 0) || (dateFinal < dateActual) ){
             //Hora de apertura de la ronda
-            rondas.hora_de_generacion = dateActual.getHours().toString() ;
+            rondas.hora_de_generacion = `${dateActual.getHours() + 1}` ;
             //Verificacion de si la ronda tiene un fin de semana intrinseco
             await this.diaSiguiente(length, vectoMoment);
             //Se aleatoriza la ronda
@@ -97,15 +103,19 @@ export class RondasService {
         const foundRondasActual = await this.rondasRepository.find();
         return foundRondasActual;
     }
+
     //  funcion para eliminar la primer ronda de la tabla 
     async delRondaprime(){
         const rondas: Rondas[] = await this.rondasRepository.find();
-        if ((rondas.length > 0) && (!rondas[0].activa)) {
+        const diaActual = new Date;
+        let diaInicial = moment(rondas[0].fecha_inicio, 'MMM Do YY').toDate();
+        if ((rondas.length > 0) && (!rondas[0].activa) && (diaActual > diaInicial)) {
             await this.rondasRepository.delete(rondas[0].id);
         }
     }
 
-    async temporalRondas(): Promise<Rondas[]>{
+    //Metodo para activar una ronda en su tiempo
+    async temporalRondas( sonLas4: boolean ): Promise<Rondas[]>{
         const usuariosArr: Usuarios[] = await this.usuariosRepository.find();
         // Constantes que almacenan la informacion de las bases de datos -->
         const foundRondas = await this.rondasRepository.find();
@@ -122,14 +132,19 @@ export class RondasService {
                 let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
                 let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').toDate();
                 let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').toDate();
+                let d5 = moment(foundRondas[j].fecha_final, 'MMM Do YY').subtract(1, 'day').toDate();
                 if (d2===6 || d2 === 0){
                     i--;
                 };
-                if((d1>=d4) && (d1<=d3)){
+                if ((d1>=d4) && (d1<=d3) && (!sonLas4)){
                     rondas.activa = true;
                     await this.RecetaServ.changeall();
-                    
-                }else{
+                }
+                else if ((d1>=d4) && (d1 <= d5) && (sonLas4)){
+                    rondas.activa = true;
+                    await this.RecetaServ.changeall();
+                }
+                else{
                     rondas.activa = false;
                 }
                 g++;
@@ -137,7 +152,6 @@ export class RondasService {
             foundRondas[j].activa = rondas.activa;
             
             await this.rondasRepository.save(foundRondas[j]);
-            //await this.delRondaprime();
         }
         const foundRondasActual = await this.rondasRepository.find();
         return foundRondasActual;
@@ -147,35 +161,70 @@ export class RondasService {
         return await this.rondasRepository.find();
     }
 
+    //Metodo que elimina la ULTIMA ronda
     async deleteRondas(): Promise<Rondas[]> {
-        const foundRondas = await this.rondasRepository.find();
-        const result = await this.rondasRepository.delete(foundRondas[foundRondas.length-1].id);
-        const foundRondasActual= await this.rondasRepository.find();
-        return foundRondasActual;
+        //1.-Se obtienen las rondas
+        const rondasArr = await this.rondasRepository.find();
+        //2.-Se elimina la ultima ronda
+        await this.rondasRepository.delete(rondasArr[rondasArr.length-1].id);
+        //3.-Se desasignan los equipos a los usuarios
+            //3.1.-Se obtienen los usuarios
+            const usuariosArr = await this.usuariosRepository.find();
+            //3.2.-Se modifican para eliminar su equipo.
+            let usuarioTemp: Usuarios;
+            for (let m = 0; m < usuariosArr.length; m++) {
+                usuarioTemp = usuariosArr[m];
+                usuarioTemp.equipo = null;
+                await this.usuariosRepository.update(usuarioTemp.id, usuarioTemp);
+            }
+        //4.-Se eliminan las asignaciones de recetas
+            //4.1.-Se obtienen las relaciones
+            const relacionesArr = await this.equipoRecetasRepository.find();
+            //4.2.-Se modifican para eliminar su equipo.
+            for (let m = 0; m < relacionesArr.length; m++) {
+                await this.equipoRecetasRepository.delete(relacionesArr[m].id);
+            }
+        //5.-Se eliminan los equipos
+            //5.1.-Se obtienen los equipos
+            const equiposArr = await this.equipoRepository.find();
+            //5.2.-Se eliminan
+            for (let m = 0; m < equiposArr.length; m++) {
+                await this.equipoRepository.delete(equiposArr[m].id);
+            }
+        //6.-Se desactivan las recetas
+            //6.1.-Se obtienen las recetas
+            const recetasArr = await this.recetasRepository.find();
+            //6.2.-Si una receta esta activa, la actualiza
+            for (let m = 0; m < recetasArr.length; m++) {
+                recetasArr[m].activo = false;
+                await this.recetasRepository.update(recetasArr[m].id, recetasArr[m]);
+            }
+        //5.-Se retorna un objeto con las nuevas rondas
+        return await this.rondasRepository.find();
     }
 
-        //Metodo recortador de ronda activa
-        async recrondas():Promise<Rondas>{
-            let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
-            let rondaActual = moment().toDate();
-            let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
+    //Metodo recortador de ronda activa
+    async recrondas():Promise<Rondas>{
+        let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
+        let rondaActual = moment().toDate();
+        let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
 
-            if (ronda) {
-                if (rondaActual < rondaFinal) {
-                    if ((rondaFinal.getDay()-1)!==0){
-                        rondaFinal.setDate(rondaFinal.getDate()-1);
-                    } else{
-                        rondaFinal.setDate(rondaFinal.getDate()-3);
-                    }
-                    ronda.fecha_final = moment(rondaFinal).format('MMM Do YY');
-                    return await this.rondasRepository.save(ronda);
-                } else {
-                    return null;     
+        if (ronda) {
+            if (rondaActual < rondaFinal) {
+                if ((rondaFinal.getDay()-1)!==0){
+                    rondaFinal.setDate(rondaFinal.getDate()-1);
+                } else{
+                    rondaFinal.setDate(rondaFinal.getDate()-3);
                 }
+                ronda.fecha_final = moment(rondaFinal).format('MMM Do YY');
+                return await this.rondasRepository.save(ronda);
             } else {
-                return null;
+                return null;     
             }
+        } else {
+            return null;
         }
+    }
     
     //Metodo para recalcular todas las rondas futuras
     async recalcularRondas() {

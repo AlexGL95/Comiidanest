@@ -1,5 +1,5 @@
 //Modulos
-import { Controller, Get, Put, Res, HttpStatus, Delete, Body } from '@nestjs/common';
+import { Controller, Get, Put, Res, HttpStatus, Delete, Body, Param } from '@nestjs/common';
 //Services
 import { EquiposService } from './equipo.service';
 //Entitys
@@ -36,6 +36,18 @@ export class EquiposController {
         return this.equiposService.getAll()
             .then( equiposArr => {
                 response.status(HttpStatus.OK).json(equiposArr);
+            } )
+            .catch( err => {
+                response.status(HttpStatus.CONFLICT).json(err);
+            } );
+    }
+
+    //API getIdByName.    
+    @Get('/:name')
+    getIdByName( @Param('name') name: string, @Res() response ) {
+        return this.equiposService.getIdByName(name)
+            .then( equipo => {
+                response.status(HttpStatus.OK).json(equipo);
             } )
             .catch( err => {
                 response.status(HttpStatus.CONFLICT).json(err);

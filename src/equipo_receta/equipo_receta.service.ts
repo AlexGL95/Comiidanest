@@ -41,32 +41,5 @@ export class EquipoRecetaService {
             this.errorService.throwError("T-803");
         }
     }
-
-    //Metodo para eliminar cualquier asignacion al equipo enviado
-    async deleteRow( idEquipo: number ) {
-        let equipoTemp = await this.equipoRepository.findOne(idEquipo);
-        //Si el equipo se encuentra, sigue, si no, retorna error
-        if ( equipoTemp ) {
-            let recetasDelEquipo = await this.equipoRecetaRepository.find( { where:{ equipo: equipoTemp } } );
-            for (let m = 0; m < recetasDelEquipo.length; m++) {
-                await this.equipoRecetaRepository.delete(recetasDelEquipo[m].id);
-            }
-        } else {
-            this.errorService.throwError("T-803");
-        }
-    }
-
-    //Metodo para asignar recetas a un equipo enviado
-    async assignRecipe( idEquipo: number, idRecetas: number[] ) {
-        try {
-            await this.deleteRow( idEquipo );    
-        } catch (err) {
-            throw err;
-        }
-        try {
-            await this.createRow( idEquipo, idRecetas );    
-        } catch (err) {
-            throw err;   
-        }
-    }
+    
 }

@@ -35,11 +35,6 @@ export class RondasController {
             response.status(HttpStatus.CONFLICT).json(err)
         })
     }
-    
-    @Get('/activa')
-    temporalRondas(): Promise<Rondas[]>{
-        return this.rondasService.temporalRondas();
-    }
 
     @Get('/test')
     testi(): Promise<Rondas>{

@@ -81,6 +81,7 @@ export class RecetasService {
             this.errorService.throwError("T-802");
         }
     }
+    
     // Cambia el estado de todas las recetas a falso
     async changeall( ) {
         const receta = await this.recetasRepository.find();

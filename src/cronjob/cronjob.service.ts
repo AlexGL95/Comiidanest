@@ -13,10 +13,18 @@ export class CronjobService {
     ){}
 
     //Ejecucion todos los dias a las 10AM
-    @Cron(CronExpression.EVERY_30_MINUTES)
-    run10seconds(){
+    @Cron(CronExpression.EVERY_DAY_AT_10AM)
+    run10am(){
         console.log('Se ejecuto');
-        this.rondaser.temporalRondas();
+        this.rondaser.temporalRondas(false);
+        this.erroservice.llenado();
+    }
+
+    @Cron(CronExpression.EVERY_DAY_AT_4PM)
+    run4pm(){
+        console.log('Se ejecuto');
+        this.rondaser.temporalRondas(true);
+        this.rondaser.delRondaprime();
         this.erroservice.llenado();
     }
 
