@@ -61,7 +61,7 @@ export class RondasService {
         //Si no hay rondas guardas o solo hay rondas obsoletas = genera una ronda el dia siguidente
         if ( (foundRondas.length === 0) || (dateFinal < dateActual) ){
             //Hora de apertura de la ronda
-            rondas.hora_de_generacion = dateActual.getHours().toString() ;
+            rondas.hora_de_generacion = `${dateActual.getHours() + 1}` ;
             //Verificacion de si la ronda tiene un fin de semana intrinseco
             await this.diaSiguiente(length, vectoMoment);
             //Se aleatoriza la ronda
