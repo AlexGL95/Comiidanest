@@ -9,6 +9,8 @@ import { Rondas } from './ronda.entity';
 import { Usuarios } from 'src/usuario/usuario.entity';
 import { EquiposService } from 'src/equipo/equipo.service';
 import { RecetasService } from '../receta/receta.service';
+import { EquipoReceta } from 'src/equipo_receta/equipo_receta.entity';
+import { Recetas } from 'src/receta/receta.entity';
 
 @Injectable()
 export class RondasService {
@@ -20,7 +22,11 @@ export class RondasService {
         @InjectRepository(Rondas)
         private rondasRepository: Repository<Rondas>,
         @InjectRepository(Usuarios)
-        private usuariosRepository: Repository<Usuarios>
+        private usuariosRepository: Repository<Usuarios>,
+        @InjectRepository(EquipoReceta)
+        private equipoRecetasRepository: Repository<EquipoReceta>,
+        @InjectRepository(Recetas)
+        private recetasRepository: Repository<Recetas>
     ){}
 
     //Metodo que guarda en un vector los dias de una ronda
@@ -147,35 +153,70 @@ export class RondasService {
         return await this.rondasRepository.find();
     }
 
+    //Metodo que elimina la ULTIMA ronda
     async deleteRondas(): Promise<Rondas[]> {
-        const foundRondas = await this.rondasRepository.find();
-        const result = await this.rondasRepository.delete(foundRondas[foundRondas.length-1].id);
-        const foundRondasActual= await this.rondasRepository.find();
-        return foundRondasActual;
+        //1.-Se obtienen las rondas
+        const rondasArr = await this.rondasRepository.find();
+        //2.-Se elimina la ultima ronda
+        await this.rondasRepository.delete(rondasArr[rondasArr.length-1].id);
+        //3.-Se desasignan los equipos a los usuarios
+            //3.1.-Se obtienen los usuarios
+            const usuariosArr = await this.usuariosRepository.find();
+            //3.2.-Se modifican para eliminar su equipo.
+            let usuarioTemp: Usuarios;
+            for (let m = 0; m < usuariosArr.length; m++) {
+                usuarioTemp = usuariosArr[m];
+                usuarioTemp.equipo = null;
+                await this.usuariosRepository.update(usuarioTemp.id, usuarioTemp);
+            }
+        //4.-Se eliminan las asignaciones de recetas
+            //4.1.-Se obtienen las relaciones
+            const relacionesArr = await this.equipoRecetasRepository.find();
+            //4.2.-Se modifican para eliminar su equipo.
+            for (let m = 0; m < relacionesArr.length; m++) {
+                await this.equipoRecetasRepository.delete(relacionesArr[m].id);
+            }
+        //5.-Se eliminan los equipos
+            //5.1.-Se obtienen los equipos
+            const equiposArr = await this.equipoRepository.find();
+            //5.2.-Se eliminan
+            for (let m = 0; m < equiposArr.length; m++) {
+                await this.equipoRepository.delete(equiposArr[m].id);
+            }
+        //6.-Se desactivan las recetas
+            //6.1.-Se obtienen las recetas
+            const recetasArr = await this.recetasRepository.find();
+            //6.2.-Si una receta esta activa, la actualiza
+            for (let m = 0; m < recetasArr.length; m++) {
+                recetasArr[m].activo = false;
+                await this.recetasRepository.update(recetasArr[m].id, recetasArr[m]);
+            }
+        //5.-Se retorna un objeto con las nuevas rondas
+        return await this.rondasRepository.find();
     }
 
-        //Metodo recortador de ronda activa
-        async recrondas():Promise<Rondas>{
-            let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
-            let rondaActual = moment().toDate();
-            let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
+    //Metodo recortador de ronda activa
+    async recrondas():Promise<Rondas>{
+        let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
+        let rondaActual = moment().toDate();
+        let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
 
-            if (ronda) {
-                if (rondaActual < rondaFinal) {
-                    if ((rondaFinal.getDay()-1)!==0){
-                        rondaFinal.setDate(rondaFinal.getDate()-1);
-                    } else{
-                        rondaFinal.setDate(rondaFinal.getDate()-3);
-                    }
-                    ronda.fecha_final = moment(rondaFinal).format('MMM Do YY');
-                    return await this.rondasRepository.save(ronda);
-                } else {
-                    return null;     
+        if (ronda) {
+            if (rondaActual < rondaFinal) {
+                if ((rondaFinal.getDay()-1)!==0){
+                    rondaFinal.setDate(rondaFinal.getDate()-1);
+                } else{
+                    rondaFinal.setDate(rondaFinal.getDate()-3);
                 }
+                ronda.fecha_final = moment(rondaFinal).format('MMM Do YY');
+                return await this.rondasRepository.save(ronda);
             } else {
-                return null;
+                return null;     
             }
+        } else {
+            return null;
         }
+    }
     
     //Metodo para recalcular todas las rondas futuras
     async recalcularRondas() {
