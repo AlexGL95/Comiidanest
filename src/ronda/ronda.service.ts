@@ -103,15 +103,19 @@ export class RondasService {
         const foundRondasActual = await this.rondasRepository.find();
         return foundRondasActual;
     }
+
     //  funcion para eliminar la primer ronda de la tabla 
     async delRondaprime(){
         const rondas: Rondas[] = await this.rondasRepository.find();
-        if ((rondas.length > 0) && (!rondas[0].activa)) {
+        const diaActual = new Date;
+        let diaInicial = moment(rondas[0].fecha_inicio, 'MMM Do YY').toDate();
+        if ((rondas.length > 0) && (!rondas[0].activa) && (diaActual > diaInicial)) {
             await this.rondasRepository.delete(rondas[0].id);
         }
     }
 
-    async temporalRondas(): Promise<Rondas[]>{
+    //Metodo para activar una ronda en su tiempo
+    async temporalRondas( sonLas4: boolean ): Promise<Rondas[]>{
         const usuariosArr: Usuarios[] = await this.usuariosRepository.find();
         // Constantes que almacenan la informacion de las bases de datos -->
         const foundRondas = await this.rondasRepository.find();
@@ -128,14 +132,19 @@ export class RondasService {
                 let d2 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').add(g, 'days').weekday();
                 let d3 = moment(foundRondas[j].fecha_final, 'MMM Do YY').toDate();
                 let d4 = moment(foundRondas[j].fecha_inicio, 'MMM Do YY').toDate();
+                let d5 = moment(foundRondas[j].fecha_final, 'MMM Do YY').subtract(1, 'day').toDate();
                 if (d2===6 || d2 === 0){
                     i--;
                 };
-                if((d1>=d4) && (d1<=d3)){
+                if ((d1>=d4) && (d1<=d3) && (!sonLas4)){
                     rondas.activa = true;
                     await this.RecetaServ.changeall();
-                    
-                }else{
+                }
+                else if ((d1>=d4) && (d1 <= d5) && (sonLas4)){
+                    rondas.activa = true;
+                    await this.RecetaServ.changeall();
+                }
+                else{
                     rondas.activa = false;
                 }
                 g++;
@@ -143,7 +152,6 @@ export class RondasService {
             foundRondas[j].activa = rondas.activa;
             
             await this.rondasRepository.save(foundRondas[j]);
-            //await this.delRondaprime();
         }
         const foundRondasActual = await this.rondasRepository.find();
         return foundRondasActual;
