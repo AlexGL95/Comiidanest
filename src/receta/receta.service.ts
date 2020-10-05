@@ -100,9 +100,18 @@ export class RecetasService {
         if (recetasArr.length > 0) {
             let ingredientes: String = "";
             //Concatena todos los ingredientes de las recetas activas
-            recetasArr.forEach( recetaActiva => {
-                ingredientes += "/" + recetaActiva.ingredientes;                
-            } );
+            for (let m = 0; m < recetasArr.length; m++) {
+                const recetaActiva = recetasArr[m];
+                //Si es la primera interracion
+                if (m === 0) {
+                    ingredientes += recetaActiva.nombre;
+                    ingredientes += "/" + recetaActiva.ingredientes;
+                }
+                else {
+                    ingredientes += "/" + recetaActiva.nombre;
+                    ingredientes += "/" + recetaActiva.ingredientes;
+                }   
+            }
             return ingredientes;
         } else {
             this.errorService.throwError("T-815");
