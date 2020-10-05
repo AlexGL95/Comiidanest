@@ -223,4 +223,11 @@ export class EquiposService {
             this.errorService.throwError("T-803");
         }
     }
+
+    async getIdByName( name: string ) {
+        console.log(name);
+        let temp = await this.equiposRepository.findOne({ where: { fecha: name } });
+        return temp.id;
+    }
+
 }

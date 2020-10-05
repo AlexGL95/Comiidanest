@@ -13,7 +13,7 @@ export class EquipoRecetaController {
     //API assignReceta( NOTA:DA POR HECHO QUE DESDE FRONT SE VALIDA QUE ESTE EN TIEMPO DE SELECCION ).
     @Put()
     assignRecipe( @Body() asignacion: assignRecipeDto, @Res() response ) {
-        this.equipoRecetaService.assignRecipe( asignacion.idEquipo, asignacion.idRecetas )
+        this.equipoRecetaService.createRow( asignacion.idEquipo, asignacion.idRecetas )
             .then( () => {
                 response.status(HttpStatus.OK).json( {mensaje:"Recetas asignadas"} );
             } )
