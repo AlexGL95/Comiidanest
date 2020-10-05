@@ -11,12 +11,10 @@ export class CondimentoController {
     
     @Get()
      async getall(@Res() res){
-        const cond = await this.consimentoService.getall();
-        if (cond) {
-            res.status(HttpStatus.OK).json(cond);
-        } else {
-            res.status(HttpStatus.NOT_FOUND).json('Error en la obtencion');
-        }
+        this.consimentoService.getall().then(condi => {
+            res.status(HttpStatus.CREATED).json(condi)
+        }).catch(()=>{
+            res.status(HttpStatus.CONFLICT).json({mensaje: 'Error en la obtencion de condimentos'});})
     }
 
     @Post()
