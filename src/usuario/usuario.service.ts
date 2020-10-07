@@ -13,6 +13,7 @@ import { Rondas } from "../ronda/ronda.entity";
 //Interfaces
 import { CreateUsuariodto } from './dto/create_usuario.dto';
 import { EquiposInterface } from "../equipo/interface/equipos.interface";
+import { Equipo } from '../equipo/equipo.entity';
 
 @Injectable()
 export class UsuarioService {
@@ -20,9 +21,11 @@ export class UsuarioService {
     constructor(
         @InjectRepository(Usuarios)
         private userRepository: Repository<Usuarios>,
+        @InjectRepository(Equipo)
+        private equipoRepository: Repository<Equipo>,
         private rondasService: RondasService,
         private equipoService: EquiposService,
-        private sererr: ErrorService, //Servicio de errores 
+        private sererr: ErrorService, //Servicio de errores        
     ){} 
 
     //Recuperar todos los usuarios
@@ -136,19 +139,15 @@ export class UsuarioService {
             }
         });
 
-        //3.-Si no (rondaActiva == 0) , elimina el usuario.
-        if (rondaActiva === 0) {
+        //3.-Si no (rondaActiva == 0) y la ronda no es la siguiente inmediata , elimina el usuario.
+        let fechaActual = new Date();
+        let inicioDeRonda = moment(rondas[0].fecha_inicio, 'MMM Do YY').subtract(1, 'day').toDate();
+        if ( (rondaActiva === 0)  && (fechaActual < inicioDeRonda) ) {
             return await this.userRepository.delete(id);
-            //Llama recalcularRondas.
-            try {
-                await this.rondasService.recalcularRondas();
-            } catch (err) {
-                throw err;
-            }
         }
 
         //4.-Si si, busca el usuario.
-        else {
+        else if ( (rondaActiva === 1) || (fechaActual >= inicioDeRonda) ) {
             let user: Usuarios;
             try {
                 user = await this.getById(id);    
@@ -159,12 +158,6 @@ export class UsuarioService {
             //5.-Si no pertenece a un equipo actualmente (equipo == null) , elimina el usuario.
             if(user.equipo === null) {
                 return await this.userRepository.delete(id);
-                //Llama recalcularRondas.
-                try {
-                    await this.rondasService.recalcularRondas();
-                } catch (err) {
-                    throw err;
-                }
             }
 
             //6.-Si si pertenece, busca el id y fecha del ultimo equipo de la ronda.
@@ -174,7 +167,8 @@ export class UsuarioService {
                 try {
                     let equiposArr: EquiposInterface[];
                     equiposArr = await this.equipoService.getAll();
-                    idUltimo = equiposArr.length - 1;
+                    let et = await this.equipoRepository.findOne({ where: {fecha: equiposArr[equiposArr.length-1].nombre } });
+                    idUltimo = et.id;
                     fechaUltimo = equiposArr[equiposArr.length - 1].nombre;
                 } catch (err) {
                     throw err;
@@ -185,13 +179,11 @@ export class UsuarioService {
                 let fechaUsuario: string = user.equipo.fecha;
 
                 //8.-Cambia las fechas de las rondas en las que se encuentran
+                console.log(idUsuario, fechaUsuario,' ultimo: ', idUltimo, fechaUltimo );
+                
                 try {
-                    await this.equipoService.updateDate( { id: idUsuario, fechaNueva: fechaUltimo} );
-                } catch (err) {
-                    throw err;
-                }
-                try {
-                    await this.equipoService.updateDate( { id: idUltimo , fechaNueva: fechaUsuario} );    
+                        await this.equipoService.updateDate( { id: idUsuario, fechaNueva: fechaUltimo} );
+                        await this.equipoService.updateDate( { id: idUltimo , fechaNueva: fechaUsuario} );
                 } catch (err) {
                     throw err;
                 }
@@ -210,6 +202,13 @@ export class UsuarioService {
                 //11.-Se modifica el equipo del compañero a null
                 try {
                     await this.updateUsuario(compañero.id, { nombre: compañero.nombre, pass: compañero.pass,token:compañero.token, super: compañero.super ,equipoid: null});
+                } catch (err) {
+                    throw err;
+                }
+
+                //11.5.-Se elimina el equipo del usuario
+                try {
+                    await this.equipoService.deleteTeamById(user.equipo.id);
                 } catch (err) {
                     throw err;
                 }
