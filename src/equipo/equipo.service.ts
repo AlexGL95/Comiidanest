@@ -123,7 +123,6 @@ export class EquiposService {
         return found2;
         //<--
     }
-        
 
     //eliminar equipo
     async deleteTeam(): Promise<Equipo> {
@@ -132,6 +131,17 @@ export class EquiposService {
             let eaux =result[result.length-1];            //variable auxiliar para retornar el equipo eliminado y encontrar el ultimo equipo de la tabla
             this.equiposRepository.delete(eaux.id);    //elimina el equipo con el id
             return eaux;  
+        }else{
+            throw new NotFoundException(`No hay equipos en la base`);
+        }
+    }
+
+    //eliminar equipo
+    async deleteTeamById( id: number ) {
+        const result = await this.equiposRepository.find();
+        if (result) {
+            this.equiposRepository.delete(id);    //elimina el equipo con el id
+            return id;  
         }else{
             throw new NotFoundException(`No hay equipos en la base`);
         }
@@ -167,7 +177,7 @@ export class EquiposService {
                 if( (fechaEquipo.getMonth() > fechaComparacion.getMonth()) || ( (fechaEquipo.getDate() > fechaComparacion.getDate()) && (fechaEquipo.getMonth() === fechaComparacion.getMonth())) ) {
                     nEquipos += 1;
                 }
-            } );
+            } );            
 
             //6.-Crea array de objetos json por cada equipo que cumpla lo anterior
             let equiposArr: EquiposInterface[] = [];
@@ -177,8 +187,7 @@ export class EquiposService {
                 let fecha = moment(equiposTemp[m].fecha, 'MMM Do YY');
 
                 //8.-Consulta en usuarios los usuarios con el id del equipo
-                let primerId = await this.equiposRepository.findOne();
-                let usuariosEnEquipo = await this.usuariosRepository.find( { relations:["equipo"], where: { equipo: (primerId.id + m) } });
+                let usuariosEnEquipo = await this.usuariosRepository.find( { relations:["equipo"], where: { equipo: (equiposTemp[m].id) } });
 
                 //9.-Genera un arreglo con los integrantes del equipo
                 let integrantesArr: string[] = [];
@@ -187,7 +196,7 @@ export class EquiposService {
                 }
 
                 //10.-Consulta la tabla de equipo_receta y extrae las recetas que contengan en equipoId el equipo
-                let recetasEnEquipo = await this.equipos_recetasRepository.find( { relations:["recetas"], where: { equipo: (primerId.id + m) } });
+                let recetasEnEquipo = await this.equipos_recetasRepository.find( { relations:["recetas"], where: { equipo: (equiposTemp[m].id) } });
 
                 //11.-Genera un arreglo con los nombres de las recetas asignadas a un equipo
                 let recetasArr: string[] = [];
@@ -197,6 +206,7 @@ export class EquiposService {
                 
                 //12.-Guarda el objeto en un arreglo de equipos a imprimir
                 let temp: EquiposInterface = {
+                    id: 0,
                     nombre: fecha.format('MMM Do YY'),
                     integrantes_nombres: integrantesArr,
                     recetas_nombres: recetasArr
@@ -215,9 +225,11 @@ export class EquiposService {
     //Metodo que actualiza la fecha del equipo
     async updateDate( update: updateDateDto ){
         const equipo = await this.equiposRepository.findOne(update.id);
+        console.log(equipo);
         //Si la encuentra, la actualiza, si no, retorna un error.
         if (equipo) {
             equipo.fecha = update.fechaNueva;
+            console.log(equipo);
             return await this.equiposRepository.update(equipo.id, equipo);
         } else {
             this.errorService.throwError("T-803");

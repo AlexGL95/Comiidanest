@@ -205,7 +205,7 @@ export class RondasService {
 
     //Metodo recortador de ronda activa
     async recrondas():Promise<Rondas>{
-        let ronda = await this.rondasRepository.findOne({ where: { activa: `1` } });
+        let ronda = await this.rondasRepository.findOne();
         let rondaActual = moment().toDate();
         let rondaFinal = moment(ronda.fecha_final, 'MMM Do YY').toDate();
 
@@ -236,11 +236,11 @@ export class RondasService {
             throw err;
         }
 
-        //2.-Busca las rondas que su fecha de inicio sea mayor a la fecha actual
+        //2.-Busca las rondas que su fecha de inicio  menos 1 dia sea mayor a la fecha actual 
         let fechaActual = new Date();
         let rondasAEliminar: Rondas[] = []
         rondas.forEach( ronda => {
-            let inicioDeRonda = moment(ronda.fecha_inicio, 'MMM Do YY').toDate();
+            let inicioDeRonda = moment(ronda.fecha_inicio, 'MMM Do YY').subtract(1, 'day').toDate();
             if( (inicioDeRonda >= fechaActual) ) {
                 rondasAEliminar.push(ronda);
             }
