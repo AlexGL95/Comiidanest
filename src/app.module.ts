@@ -16,11 +16,11 @@ import { CondimentoModule } from './Condimento/condimento.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: 'oruzservice.com',
       port: 3306,
-      username: 'root',
-      password: '',
-      database: 'comiidav2',
+      username: 'oruzserv_comiida',
+      password: 'eC-p(keT.[8u',
+      database: 'oruzserv_comiida',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
