@@ -125,110 +125,111 @@ export class UsuarioService {
     async deleteUsuario( id: number ): Promise <any> {
         //1.-Obten las rondas en el sistema
         let rondas: Rondas[] = [];
-        try {
             rondas = await this.rondasService.getRondas();
-        } catch (err) {
-            throw err;
-        }
 
-        //2.-Verifica si hay una ronda activa
-        let rondaActiva: number = 0;
-        rondas.forEach( ronda => {
-            if(ronda.activa === true) {
-                rondaActiva = ronda.id;
-            }
-        });
-
-        //3.-Si no (rondaActiva == 0) y la ronda no es la siguiente inmediata , elimina el usuario.
-        let fechaActual = new Date();
-        let inicioDeRonda = moment(rondas[0].fecha_inicio, 'MMM Do YY').subtract(1, 'day').toDate();
-        if ( (rondaActiva === 0)  && (fechaActual < inicioDeRonda) ) {
-            return await this.userRepository.delete(id);
-        }
-
-        //4.-Si si, busca el usuario.
-        else if ( (rondaActiva === 1) || (fechaActual >= inicioDeRonda) ) {
-            let user: Usuarios;
-            try {
-                user = await this.getById(id);    
-            } catch (err) {
-                throw err;
-            }
-
-            //5.-Si no pertenece a un equipo actualmente (equipo == null) , elimina el usuario.
-            if(user.equipo === null) {
-                return await this.userRepository.delete(id);
-            }
-
-            //6.-Si si pertenece, busca el id y fecha del ultimo equipo de la ronda.
-            else {
-                let idUltimo: number;
-                let fechaUltimo: string;
-                try {
-                    let equiposArr: EquiposInterface[];
-                    equiposArr = await this.equipoService.getAll();
-                    let et = await this.equipoRepository.findOne({ where: {fecha: equiposArr[equiposArr.length-1].nombre } });
-                    idUltimo = et.id;
-                    fechaUltimo = equiposArr[equiposArr.length - 1].nombre;
-                } catch (err) {
-                    throw err;
+            if (rondas.length > 0 ) {
+                //2.-Verifica si hay una ronda activa
+                let rondaActiva: number = 0;
+                rondas.forEach( ronda => {
+                    if(ronda.activa === true) {
+                        rondaActiva = ronda.id;
+                    }
+                });
+                //3.-Si no (rondaActiva == 0) y la ronda no es la siguiente inmediata , elimina el usuario.
+                let fechaActual = new Date();
+                let inicioDeRonda = moment(rondas[0].fecha_inicio, 'MMM Do YY').subtract(1, 'day').toDate();
+                if ( (rondaActiva === 0)  && (fechaActual < inicioDeRonda) ) {
+                    return await this.userRepository.delete(id);
                 }
-
-                //7.-Obten la fecha del equipo al que pertenece el usuario que se quiere eliminar
-                let idUsuario: number = user.equipo.id;
-                let fechaUsuario: string = user.equipo.fecha;
-
-                //8.-Cambia las fechas de las rondas en las que se encuentran
-                console.log(idUsuario, fechaUsuario,' ultimo: ', idUltimo, fechaUltimo );
-                
-                try {
-                        await this.equipoService.updateDate( { id: idUsuario, fechaNueva: fechaUltimo} );
-                        await this.equipoService.updateDate( { id: idUltimo , fechaNueva: fechaUsuario} );
-                } catch (err) {
-                    throw err;
+        
+                //4.-Si si, busca el usuario.
+                else if ( (rondaActiva === 1) || (fechaActual >= inicioDeRonda) ) {
+                    let user: Usuarios;
+                    try {
+                        user = await this.getById(id);    
+                    } catch (err) {
+                        throw err;
+                    }
+        
+                    //5.-Si no pertenece a un equipo actualmente (equipo == null) , elimina el usuario.
+                    if(user.equipo === null) {
+                        return await this.userRepository.delete(id);
+                    }
+        
+                    //6.-Si si pertenece, busca el id y fecha del ultimo equipo de la ronda.
+                    else {
+                        let idUltimo: number;
+                        let fechaUltimo: string;
+                        try {
+                            let equiposArr: EquiposInterface[];
+                            equiposArr = await this.equipoService.getAll();
+                            let et = await this.equipoRepository.findOne({ where: {fecha: equiposArr[equiposArr.length-1].nombre } });
+                            idUltimo = et.id;
+                            fechaUltimo = equiposArr[equiposArr.length - 1].nombre;
+                        } catch (err) {
+                            throw err;
+                        }
+        
+                        //7.-Obten la fecha del equipo al que pertenece el usuario que se quiere eliminar
+                        let idUsuario: number = user.equipo.id;
+                        let fechaUsuario: string = user.equipo.fecha;
+        
+                        //8.-Cambia las fechas de las rondas en las que se encuentran
+                        console.log(idUsuario, fechaUsuario,' ultimo: ', idUltimo, fechaUltimo );
+                        
+                        try {
+                                await this.equipoService.updateDate( { id: idUsuario, fechaNueva: fechaUltimo} );
+                                await this.equipoService.updateDate( { id: idUltimo , fechaNueva: fechaUsuario} );
+                        } catch (err) {
+                            throw err;
+                        }
+        
+                        //9.-Se elimina el usuario que se desea eliminar
+                        this.userRepository.delete(id);
+        
+                        //10.-Encuentra el compañero de equipo del usuario que se quiere eliminar
+                        let compañero: Usuarios;
+                        try {
+                            compañero = await this.getOneByTeam(user.equipo.id);
+                        } catch (err) {
+                            throw err;
+                        }
+        
+                        //11.-Se modifica el equipo del compañero a null
+                        try {
+                            await this.updateUsuario(compañero.id, { nombre: compañero.nombre, pass: compañero.pass,token:compañero.token, super: compañero.super ,equipoid: null});
+                        } catch (err) {
+                            throw err;
+                        }
+        
+                        //11.5.-Se elimina el equipo del usuario
+                        try {
+                            await this.equipoService.deleteTeamById(user.equipo.id);
+                        } catch (err) {
+                            throw err;
+                        }
+        
+                        //12.-Llama la funcion recortar ronda.
+                        try {
+                            await this.rondasService.recrondas();
+                        } catch (err) {
+                            throw err;
+                        }
+        
+                        //13.-Llama recalcularRondas.
+                        try {
+                            await this.rondasService.recalcularRondas();
+                        } catch (err) {
+                            throw err;
+                        }
+        
+                    }
                 }
-
-                //9.-Se elimina el usuario que se desea eliminar
+            } else {
                 this.userRepository.delete(id);
-
-                //10.-Encuentra el compañero de equipo del usuario que se quiere eliminar
-                let compañero: Usuarios;
-                try {
-                    compañero = await this.getOneByTeam(user.equipo.id);
-                } catch (err) {
-                    throw err;
-                }
-
-                //11.-Se modifica el equipo del compañero a null
-                try {
-                    await this.updateUsuario(compañero.id, { nombre: compañero.nombre, pass: compañero.pass,token:compañero.token, super: compañero.super ,equipoid: null});
-                } catch (err) {
-                    throw err;
-                }
-
-                //11.5.-Se elimina el equipo del usuario
-                try {
-                    await this.equipoService.deleteTeamById(user.equipo.id);
-                } catch (err) {
-                    throw err;
-                }
-
-                //12.-Llama la funcion recortar ronda.
-                try {
-                    await this.rondasService.recrondas();
-                } catch (err) {
-                    throw err;
-                }
-
-                //13.-Llama recalcularRondas.
-                try {
-                    await this.rondasService.recalcularRondas();
-                } catch (err) {
-                    throw err;
-                }
-
             }
-        }
+        
+    
     }
 
     //Validar contraseña
